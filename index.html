@@ -221,514 +221,666 @@ footer{border-top:1px solid var(--border);padding:30px 0;color:var(--muted);font
 
 <script>
 const GAMES = [
-  /* --- JUEGOS DESDE DEAD ISLAND HACIA ATRÁS --- */
-  {
+{
     "name": "Dead Island",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/dead-island.webp"
   },
-  {
+{
     "name": "Dark Souls",
     "console": "PS3",
     "format": "HEN PKG",
     "image": "imagenes/dark-souls.webp"
   },
-  {
+{
     "name": "Dante's Inferno",
     "console": "PS3",
     "format": "CARPETA PKG",
     "image": "imagenes/dantes-inferno.webp"
   },
-  {
+{
     "name": "Crysis 3",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/crysis-3.webp"
   },
-  {
+{
     "name": "Crash Bandicoot: Warped",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/crash-bandicoot-warped.webp"
   },
-  {
+{
     "name": "Blur",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/blur.webp"
   },
-  {
+{
     "name": "Battlefield 3",
     "console": "PS3",
     "format": "CARPETA PKG",
     "image": "imagenes/battlefield-3.webp"
   },
-  {
+{
     "name": "Batman Arkham City",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/batman-arkham-city.webp"
   },
-  {
+{
     "name": "Assassins Creed II",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/assassins-creed-2.webp"
   },
-  {
+{
     "name": "Army Of Two",
     "console": "PS3",
     "format": "CARPETA PKG",
     "image": "imagenes/army-of-two.webp"
   },
-
-  /* --- RESTO DEL CATÁLOGO --- */
-  {
+{
     "name": "007 LEGENDS",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/007-legends.webp"
   },
-  {
+{
     "name": "2010 Fifa World Cup South Africa",
     "console": "PS3",
     "format": "CARPETA PKG",
     "image": "imagenes/2010-fifa-world-cup-south-africa.webp"
   },
-  {
+{
     "name": "2014 FIFA World Cup Brazil",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/2014-fifa-world-cup-brazil.webp"
   },
-  {
+{
     "name": "3 on 3 NHL Arcade",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/3-on-3-nhl-arcade.webp"
   },
-  {
+{
     "name": "Ace Combat: Assault Horizon",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/ace-combat-assault-horizon.webp"
   },
-  {
+{
     "name": "Adventure Time: Finn & Jake Investigations",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/adventure-time-finn-jake-investigations.webp"
   },
-  {
+{
     "name": "AFL Live",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/afl-live.webp"
   },
-  {
+{
     "name": "Akimi Village",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/akimi-village.webp"
   },
-  {
+{
     "name": "Aliens vs. Predator",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/aliens-vs-predator.webp"
   },
-  {
+{
     "name": "Alone in the Dark: Inferno",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/alone-in-the-dark-inferno.webp"
   },
-  {
+{
     "name": "Angry Birds: Star Wars",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/angry-birds-star-wars.webp"
   },
-  {
+{
     "name": "Angry Birds: Trilogy",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/angry-birds-trilogy.webp"
   },
-  {
+{
     "name": "Apache: Air Assault",
     "console": "PS3",
     "format": "CARPETA PKG",
     "image": "imagenes/apache-air-assault.webp"
   },
-  {
+{
     "name": "Armored Core 4",
     "console": "PS3",
     "format": "HEN PKG",
     "image": "imagenes/armored-core-4.webp"
   },
-  {
+{
     "name": "Armored Core V",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/armored-core-v.webp"
   },
-  {
+{
     "name": "Armored Core: For Answer",
     "console": "PS3",
     "format": "CARPETA PKG",
     "image": "imagenes/armored-core-for-answer.webp"
   },
-  {
+{
     "name": "Armored Core: Verdict Day",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/armored-core-verdict-day.webp"
   },
-  {
+{
     "name": "Army Of TWO: The 40th Day",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/army-of-two-the-40th-day.webp"
   },
-  {
+{
     "name": "Army Of Two: The Devil's Cartel",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/army-of-two-the-devils-cartel.webp"
   },
-  {
+{
     "name": "Assassin's Creed 4: Freedom Cry",
     "console": "PS3",
     "format": "HEN PKG",  
     "image": "imagenes/assassins-creed-4 Freedom Cry.webp"
   },
-  {
+{
     "name": "Assassins Creed: Brotherhood",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/assassins-creed-brotherhood.webp"
   },
-  {
+{
     "name": "Asura's Wrath",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/asuras-wrath.webp"
   },
-  {
+{
     "name": "Awesomenauts",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/awesomenauts.webp"
   },
-  {
+{
     "name": "Back To Bed",
     "console": "PS3",
     "format": "HEN PKG",
     "image": "imagenes/back-to-bed.webp"
   },
-  {
+{
     "name": "Backbreaker Vengeance",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/backbreaker-vengeance.webp"
   },
-  {
+{
     "name": "Backgammon Blitz",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/backgammon-blitz.webp"
   },
-  {
+{
     "name": "Bakugan Battle Brawlers",
     "console": "PS3",
     "format": "HEN PKG",
     "image": "imagenes/bakugan-battle-brawlers.webp"
   },
-  {
+{
     "name": "Bakugan Battle Brawlers: Defenders Of The Court",
     "console": "PS3",
     "format": "HEN PKG",
     "image": "imagenes/bakugan-battle-brawlers-defenders-of-the-court.webp"
   },
-  {
+{
     "name": "Batman Arkham Origins",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/batman-arkham-origins.webp"
   },
-  {
+{
     "name": "Batman Origins Blackgate",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/batman-origins-blackgate.webp"
   },
-  {
+{
     "name": "Battlefield 4: Premium",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/battlefield-4-premium.webp"
   },
-  {
+{
     "name": "Battlefield Hardline",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/battlefield-hardline.webp"
   },
-  {
+{
     "name": "Battlefield: Bad Company - Gold Edition",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/battlefield-bad-company-gold-edition.webp"
   },
-  {
+{
     "name": "Battlefield: Bad Company 2 - Limited Edition",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/battlefield-bad-company-2-limited-edition.webp"
   },
-  {
+{
     "name": "Bejeweled 2",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/bejeweled-2.webp"
   },
-  {
+{
     "name": "Ben 10: Omniverse",
     "console": "PS3",
     "format": "CARPETA PKG",
     "image": "imagenes/ben-10-omniverse.webp"
   },
-  {
+{
     "name": "Ben 10: Ultimate Cosmic Destruction",
     "console": "PS3",
     "format": "CARPETA PKG",
     "image": "imagenes/ben-10-ultimate-cosmic-destruction.webp"
   },
-  {
+{
     "name": "Beyond Two Souls",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/beyond-two-souls.webp"
   },
-  {
+{
     "name": "Big Sky Infinity",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/big-sky-infinity.webp"
   },
-  {
+{
     "name": "Bioshock Infinite",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/bioshock-infinite.webp"  
   },
-  {
+{
     "name": "Blazblue Central Fiction",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/blazblue-central-fiction.webp"
   },
-  {
+{
     "name": "Blazblue: Calamity Trigger",
     "console": "PS3",
     "format": "HEN PKG",
     "image": "imagenes/blazblue-calamity-trigger.webp"
   },
-  {
+{
     "name": "Blazing Angels: Squadrons of WWII",
     "console": "PS3",
     "format": "CARPETA PKG",
     "image": "imagenes/blazing-angels-squadrons-of-wwii.webp"
   },
-  {
+{
     "name": "Bleach Soul Resurreccion",
     "console": "PS3",
     "format": "HEN PKG",
     "image": "imagenes/bleach-soul-resurreccion.webp"
   },
-  {
+{
     "name": "Blokus",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/blokus.webp"
   },
-  {
+{
     "name": "Blood Drive",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/blood-drive.webp"
   },
-  {
+{
     "name": "Blood Of The Werewolf",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/blood-of-the-werewolf.webp"
   },
-  {
+{
     "name": "Bloodrayne Betrayal",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/bloodrayne-betrayal.webp"  
   },
-  {
+{
     "name": "Borderlands 2: GOTY Edition",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/borderlands-2-goty-edition.webp"
   },
-  {
+{
     "name": "Brink",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/brink.webp"
   },
-  {
+{
     "name": "Brutal Legend",
     "console": "PS3",
     "format": "CARPETA PKG",
     "image": "imagenes/brutal-legend.webp"
   },
-  {
+{
     "name": "Burnout Crash",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/burnout-crash.webp"
   },
-  {
+{
     "name": "Burnout Paradise",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/burnout-paradise.webp"
   },
-  {
+{
     "name": "Cabela's Big Game: Hunter Pro Hunts",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/cabelas-big-game-hunter-pro-hunts.webp"
   },
-  {
+{
     "name": "Cabela's Hunting: Expeditions",
     "console": "PS3",
     "format": "HEN PKG",
     "image": "imagenes/cabelas-hunting-expeditions.webp"
   },
-  {
+{
     "name": "Call Of Duty: Advanced Warfare",
     "console": "PS3",
     "format": "CARPETA PKG",
     "image": "imagenes/call-of-duty-advanced-warfare.webp"
   },
-  {
+{
     "name": "Call Of Duty: Black OPS",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/call-of-duty-black-ops.webp"
   },
-  {
+{
     "name": "Call Of Duty: Black OPS 2",
     "console": "PS3",
     "format": "CARPETA PKG",
     "image": "imagenes/call-of-duty-black-ops-2.webp"
   },
-  {
+{
     "name": "Call Of Duty: Ghosts",
     "console": "PS3",
     "format": "CARPETA PKG",
     "image": "imagenes/call-of-duty-ghosts.webp"
   },
-  {
+{
     "name": "Call Of Duty: Modern Warfare 2",
     "console": "PS3",
     "format": "CARPETA PKG",
     "image": "imagenes/call-of-duty-modern-warfare-2.webp"
   },
-  {
+{
     "name": "Call Of Duty: Modern Warfare 3",
     "console": "PS3",
     "format": "CARPETA PKG",
     "image": "imagenes/call-of-duty-modern-warfare-3.webp"
   },
-  {
+{
     "name": "Call Of Duty: World At War",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/call-of-duty-world-at-war.webp"
   },
-  {
+{
     "name": "Call of Juarez: Bound in Blood",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/call-of-juarez-bound-in-blood.webp"
   },
-  {
+{
     "name": "Call of Juarez: Gunslinger",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/call-of-juarez-gunslinger.webp"
   },
-  {
+{
     "name": "Call of Juarez: The Cartel",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/call-of-juarez-the-cartel.webp"
   },
-  {
+{
     "name": "Capitan America: Super Soldier",
     "console": "PS3",
     "format": "HEN PKG",
     "image": "imagenes/capitan-america-super-soldier.webp"
   },
-  {
+{
     "name": "Cars 2",
     "console": "PS3",
     "format": "CARPETA PKG",
     "image": "imagenes/cars-2.webp"
   },
-  {
+{
     "name": "Cars: Race-O-Rama",
     "console": "PS3",
     "format": "CARPETA PKG",
     "image": "imagenes/cars-race-o-rama.webp"
   },
-  {
+{
     "name": "Castle Crashers",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/castle-crashers.webp"
   },
-  {
+{
     "name": "Castle of Illusion Starring Mickey Mouse",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/castle-of-illusion-starring-mickey-mouse.webp"
   },
-  {
+{
+    "name": "Child of Light",
+    "console": "PS3",
+    "image": "imagenes/child-of-light.webp"
+  },
+{
+    "name": "Black Myth: Wukong",
+    "console": "PS3",
+    "image": "imagenes/black-myth-wukong.webp"
+  },
+{
+    "name": "TEKKEN 8",
+    "console": "PS3",
+    "image": "imagenes/tekken-8.webp"
+  },
+{
+    "name": "Diablo IV",
+    "console": "PS3",
+    "image": "imagenes/diablo-iv.webp"
+  },
+{
+    "name": "Assassin’s Creed Mirage",
+    "console": "PS3",
+    "image": "imagenes/assassins-creed-mirage.webp"
+  },
+{
+    "name": "Dragon Ball Z: Kakarot Daima Edition",
+    "console": "PS3",
+    "image": "imagenes/dragon-ball-z-kakarot-daima-edition.webp"
+  },
+{
+    "name": "The Crew Motorfest",
+    "console": "PS3",
+    "image": "imagenes/the-crew-motorfest.webp"
+  },
+{
+    "name": "Call of Duty: Black Ops Cold War",
+    "console": "PS3",
+    "image": "imagenes/call-of-duty-black-ops-cold-war.webp"
+  },
+{
+    "name": "Far Cry 6 GOTY",
+    "console": "PS3",
+    "image": "imagenes/far-cry-6-goty.webp"
+  },
+{
+    "name": "Naruto x Boruto: Ultimate Ninja Storm Connections Deluxe",
+    "console": "PS3",
+    "image": "imagenes/naruto-x-boruto-ultimate-ninja-storm-connections-deluxe.webp"
+  },
+{
+    "name": "Need for Speed Ultimate Bundle",
+    "console": "PS3",
+    "image": "imagenes/need-for-speed-ultimate-bundle.webp"
+  },
+{
+    "name": "Dragon Ball FighterZ Legendary Edition",
+    "console": "PS3",
+    "image": "imagenes/dragon-ball-fighterz-legendary-edition.webp"
+  },
+{
+    "name": "Naruto Shippuden: Ultimate Ninja Storm Legacy",
+    "console": "PS3",
+    "image": "imagenes/naruto-shippuden-ultimate-ninja-storm-legacy.webp"
+  },
+{
+    "name": "Assassin’s Creed Odyssey",
+    "console": "PS3",
+    "image": "imagenes/assassins-creed-odyssey.webp"
+  },
+{
+    "name": "Assassin’s Creed Origins Gold Edition",
+    "console": "PS3",
+    "image": "imagenes/assassins-creed-origins-gold-edition.webp"
+  },
+{
+    "name": "Batman: Arkham Knight",
+    "console": "PS3",
+    "image": "imagenes/batman-arkham-knight.webp"
+  },
+{
+    "name": "The Forest",
+    "console": "PS3",
+    "image": "imagenes/the-forest.webp"
+  },
+{
+    "name": "The Quarry Deluxe Edition",
+    "console": "PS3",
+    "image": "imagenes/the-quarry-deluxe-edition.webp"
+  },
+{
+    "name": "Little Nightmares I & II Bundle",
+    "console": "PS3",
+    "image": "imagenes/little-nightmares-i-ii-bundle.webp"
+  },
+{
+    "name": "Assassin’s Creed Unity",
+    "console": "PS3",
+    "image": "imagenes/assassins-creed-unity.webp"
+  },
+{
+    "name": "Call of Duty: Vanguard",
+    "console": "PS3",
+    "image": "imagenes/call-of-duty-vanguard.webp"
+  },
+{
+    "name": "Call of Duty: WWII Digital Deluxe",
+    "console": "PS3",
+    "image": "imagenes/call-of-duty-wwii-digital-deluxe.webp"
+  },
+{
+    "name": "Far Cry 5 Gold",
+    "console": "PS3",
+    "image": "imagenes/far-cry-5-gold.webp"
+  },
+{
+    "name": "Far Cry New Dawn Deluxe",
+    "console": "PS3",
+    "image": "imagenes/far-cry-new-dawn-deluxe.webp"
+  },
+{
+    "name": "TEKKEN 7 Originals",
+    "console": "PS3",
+    "image": "imagenes/tekken-7-originals.webp"
+  },
+{
+    "name": "Crysis Remastered Trilogy",
+    "console": "PS3",
+    "image": "imagenes/crysis-remastered-trilogy.webp"
+  },
+{
+    "name": "Dead Island Definitive",
+    "console": "PS3",
+    "image": "imagenes/dead-island-definitive.webp"
+  },
+{
+    "name": "Judgment",
+    "console": "PS3",
+    "image": "imagenes/judgment.webp"
+  },
+{
+    "name": "MX vs ATV Legends",
+    "console": "PS3",
+    "image": "imagenes/mx-vs-atv-legends.webp"
+  },
+{
+    "name": "Outlast: Trinity",
+    "console": "PS3",
+    "image": "imagenes/outlast-trinity.webp"
+  },
+{
+    "name": "Zombie Army Trilogy",
+    "console": "PS3",
+    "image": "imagenes/zombie-army-trilogy.webp"
+  },
+{
     "name": "Castlevania Harmony of Despair",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/castlevania-harmony-of-despair.webp"
   },
-  {
+{
     "name": "Castlevania: Lord Of Shadows",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/castlevania-lord-of-shadows.webp"
   },
-  {
+{
     "name": "Castlevania: Lord Of Shadows 2",
     "console": "PS3",
     "format": "NO HEN PKG",
     "image": "imagenes/castlevania-lord-of-shadows-2.webp"
   },
-  {
+{
     "name": "Castlevania: Lords of Shadow – Mirror of Fate HD",
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/castlevania-lords-of-shadow-mirror-of-fate-hd.webp"
   },
-  {
+{
 "name": "Dead Island",
 "console": "PS3",
 "image": "imagenes/dead-island.webp"
@@ -2627,13 +2779,7 @@ const GAMES = [
 "name": "Zombie Driver HD",
 "console": "PS3",
 "image": "imagenes/zombie-driver-hd.webp"
-},
-{
-    "name": "Child of Light",
-    "console": "PS3",
-    "format": "PSN ISO",
-    "image": "imagenes/child-of-light.webp"
-},
+}
 ];
 
 const WHATSAPP_NUMBER = "5493434524653"; // Reemplazá esto por tu número, sin + ni espacios.
