@@ -200,6 +200,16 @@ footer{border-top:1px solid var(--border);padding:30px 0;color:var(--muted);font
 </section>
 
 <section class="container" id="catalogo">
+  <!-- Formulario temporal para agregar juegos fácil -->
+<div style="background: var(--panel); border: 1px dashed var(--accent); padding: 20px; border-radius: 16px; margin-bottom: 25px;">
+  <h3 style="margin-top: 0; color: var(--accent2);">⚡ Panel rápido de carga (Temporal)</h3>
+  <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+    <input id="newGameName" class="search" type="text" placeholder="Nombre del juego..." style="flex: 1; min-width: 200px;">
+    <input id="newGameFormat" class="search" type="text" placeholder="Formato (ej: HEN PKG)..." style="flex: 1; min-width: 150px;">
+    <input id="newGameImage" class="search" type="text" placeholder="Ruta imagen (ej: imagenes/juego.webp)..." style="flex: 1; min-width: 200px;">
+    <button class="btn primary" onclick="agregarJuegoRapido()">+ Agregar Juego</button>
+  </div>
+</div>
   <div class="catalog-head">
     <div>
       <h2>Catálogo</h2>
@@ -221,7 +231,7 @@ footer{border-top:1px solid var(--border);padding:30px 0;color:var(--muted);font
 <div id="modalRoot"></div>
 
 <script>
-const GAMES = [
+const GAMES_FIJOS = [
   {
     "name": "007 LEGENDS",
     "console": "PS3",
@@ -692,6 +702,7 @@ const GAMES = [
     "image": "imagenes/child-of-light.webp"
   }
 ];
+let GAMES = JSON.parse(localStorage.getItem("bootplay_custom_games")) || GAMES_FIJOS;
 const WHATSAPP_NUMBER = "5493434524653"; // Reemplazá esto por tu número, sin + ni espacios.
 let selected = JSON.parse(localStorage.getItem("bootplay_selected") || "[]");
 
@@ -829,7 +840,39 @@ function sendWhatsApp(){
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, "_blank");
 }
 function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
+function agregarJuegoRapido() {
+  const name = document.getElementById("newGameName").value.trim();
+  const format = document.getElementById("newGameFormat").value.trim() || "HEN PKG";
+  const image = document.getElementById("newGameImage").value.trim();
 
+  if (!name || !image) {
+    alert("Por lo menos completa el nombre y la ruta de la imagen.");
+    return;
+  }
+
+  const nuevoJuego = {
+    name: name,
+    console: "PS3",
+    format: format,
+    image: image
+  };
+
+  // Lo sumamos a la lista
+  GAMES.push(nuevoJuego);
+  
+  // Lo guardamos en la memoria del navegador para que no se borre al actualizar
+  // (Nota: solo se guarda en esta compu, luego cuando armemos bien el CMS se pasa todo de una)
+  localStorage.setItem("bootplay_custom_games", JSON.stringify(GAMES));
+
+  // Limpiamos losinputs y refrescamos la grilla
+  document.getElementById("newGameName").value = "";
+  document.getElementById("newGameFormat").value = "";
+  document.getElementById("newGameImage").value = "";
+  
+  document.getElementById("heroCount").textContent = GAMES.length;
+  render();
+  alert("¡Juego agregado con éxito!");
+}
 search.addEventListener("input", render);
 updateCount(); render();
 </script>
