@@ -1,553 +1,898 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Juegos PS3</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-        h1 {
-            margin-bottom: 20px;
-        }
-        .search-container {
-            margin-bottom: 20px;
-        }
-        input[type="text"] {
-            padding: 10px;
-            width: 50%;
-            max-width: 400px;
-            border-radius: 5px;
-            border: 1px solid #444;
-            background-color: #222;
-            color: #fff;
-            font-size: 16px;
-        }
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            padding: 20px;
-            justify-content: center;
-        }
-        .card {
-            background-color: #1e1e1e;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-        }
-        .card img {
-            width: 100%;
-            height: auto;
-            border-radius: 5px;
-            aspect-ratio: 1 / 1;
-            object-fit: cover;
-        }
-        .card h3 {
-            font-size: 16px;
-            margin: 10px 0 5px 0;
-        }
-        .card p {
-            font-size: 14px;
-            color: #aaa;
-            margin: 0;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bootplay | Catálogo PS3</title>
+<link rel="icon" href="imagenes/mi-logo-removebg-preview.png">
+<meta name="description" content="Catálogo de juegos PS3 de Bootplay. Seleccioná tus juegos y enviá tu pedido.">
+<style>
+  /* Estilos para la ventana emergente (Modal) */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  backdrop-filter: blur(5px);
+  padding: 20px;
+}
+.modal-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-box {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  width: min(480px, 92vw);
+  max-height: 85vh; /* Evita que se salga de la pantalla en celulares */
+  border-radius: 20px;
+  padding: 24px;
+  position: relative;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto; /* Activa la barra de desplazamiento general si el contenido es largo */
+}
+.modal-close {
+  position: sticky; /* Se queda fija arriba a la derecha cuando haces scroll */
+  top: 0;
+  float: right;
+  margin-left: auto;
+  background: rgba(16, 19, 26, 0.8);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-weight: bold;
+  z-index: 10; /* Asegura que la cruz esté siempre al frente de todo */
+  backdrop-filter: blur(4px);
+}
+.modal-img-container {
+  width: 100%;
+  max-height: 280px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+.modal-img-container img {
+  width: 100%;
+  height: auto;
+  max-height: 280px;
+  object-fit: contain; /* Cambiado a contain para que la imagen se vea COMPLETA sin recortarse */
+}
+.modal-title {
+  font-size: 22px;
+  font-weight: 850;
+  margin: 0;
+}
+.modal-desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 0;
+  max-height: 120px; /* Si el texto de la descripción es muy largo, genera su propia barra interna */
+  overflow-y: auto;
+  padding-right: 4px;
+}
+  .hero-card-hen {
+  position: relative;
+  overflow: hidden;
+}
+.hero-card-hen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url('imagenes/HEN-logo.png'); /* Reemplaza con la ruta de tu logo */
+  background-size: cover;
+  background-position: center;
+  opacity: 0.08; /* Esto controla qué tan difuminado/transparente se ve (de 0 a 1) */
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-card-hen > * {
+  position: relative;
+  z-index: 1;
+}
+:root{
+  --bg:#07080c; --panel:#10131a; --panel2:#151923; --text:#f4f6fb;
+  --muted:#9ca3b0; --accent:#7c5cff; --accent2:#9b86ff;
+  --border:rgba(255,255,255,.09); --ok:#45d483; --danger:#ff6574;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(circle at 15% -10%,#21194a 0,transparent 35%),var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button,input{font:inherit}
+a{text-decoration:none;color:inherit}
+.container{width:min(1180px,92%);margin:auto}
+header{position:sticky;top:0;z-index:20;background:rgba(7,8,12,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav{height:72px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:900;font-size:22px;letter-spacing:.3px}
+.logo{width:55px;height:55px;border-radius:11px;background:linear-gradient(135deg,var(--accent),#4d38b8);display:grid;place-items:center;box-shadow:0 8px 28px rgba(124,92,255,.28)}
+.logo span{font-size:19px}
+.nav-actions{display:flex;gap:10px}
+.btn{border:1px solid var(--border);background:var(--panel2);color:var(--text);padding:10px 15px;border-radius:12px;cursor:pointer;font-weight:750;transition:.18s}
+.btn:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.18)}
+.btn.primary{background:linear-gradient(135deg,var(--accent),#6248db);border-color:transparent}
+.hero{padding:74px 0 42px}
+.hero-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:30px;align-items:center}
+.eyebrow{color:#b7aaff;font-weight:800;text-transform:uppercase;font-size:12px;letter-spacing:1.6px}
+h1{font-size:clamp(44px,7vw,78px);line-height:.95;margin:12px 0 20px;letter-spacing:-3px}
+.hero p{font-size:18px;line-height:1.6;color:var(--muted);max-width:680px}
+.hero-card{background:linear-gradient(145deg,rgba(124,92,255,.16),rgba(255,255,255,.03));border:1px solid var(--border);border-radius:24px;padding:25px;box-shadow:0 25px 70px rgba(0,0,0,.25)}
+.hero-card .big{font-size:48px}
+.hero-card strong{font-size:22px}
+.hero-card p{font-size:14px;margin:8px 0 0}
+.controls{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0 28px}
+.search{flex:1;min-width:240px;background:var(--panel);border:1px solid var(--border);color:var(--text);padding:14px 16px;border-radius:14px;outline:none}
+.search:focus{border-color:var(--accent)}
+.catalog-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:15px}
+.catalog-head h2{margin:0;font-size:30px}
+.count{color:var(--muted);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding-bottom:90px}
+.card{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--border);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;min-height:270px;transition:.2s}
+.card:hover{transform:translateY(-3px);border-color:rgba(124,92,255,.4)}
+.cover{height:150px;background:radial-gradient(circle at 50% 35%,rgba(124,92,255,.4),transparent 45%),linear-gradient(145deg,#17122d,#0b0d13);display:grid;place-items:center;position:relative}
+.cover-icon{font-size:50px;filter:drop-shadow(0 8px 20px rgba(124,92,255,.25))}
+.badge{position:absolute;top:11px;left:11px;font-size:11px;font-weight:800;padding:6px 8px;border-radius:9px;background:rgba(69,212,131,.12);color:var(--ok);border:1px solid rgba(69,212,131,.18)}
+.card-body{padding:15px;display:flex;flex-direction:column;flex:1}
+.game-name{font-weight:850;line-height:1.25;margin-bottom:8px}
+.meta{font-size:12px;color:var(--muted);margin-bottom:14px}
+.add{margin-top:auto;width:100%}
+.empty{grid-column:1/-1;padding:45px;text-align:center;color:var(--muted);background:var(--panel);border:1px dashed var(--border);border-radius:18px}
+.drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;pointer-events:none;transition:.2s;z-index:30}
+.drawer{position:fixed;right:0;top:0;height:100%;width:min(440px,94vw);background:#0d1017;border-left:1px solid var(--border);transform:translateX(100%);transition:.25s;z-index:31;padding:22px;display:flex;flex-direction:column}
+.open .drawer-backdrop{opacity:1;pointer-events:auto}
+.open .drawer{transform:translateX(0)}
+.drawer-head{display:flex;justify-content:space-between;align-items:center}
+.drawer h3{font-size:25px;margin:0}
+.selected{flex:1;overflow:auto;margin:20px 0}
+.selected-item{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:13px 0;border-bottom:1px solid var(--border)}
+.remove{border:0;background:transparent;color:var(--muted);cursor:pointer}
+.drawer-footer{border-top:1px solid var(--border);padding-top:18px}
+.drawer-footer p{color:var(--muted);font-size:13px;line-height:1.5}
+footer{border-top:1px solid var(--border);padding:30px 0;color:var(--muted);font-size:13px}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr}.grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:650px){.nav{height:64px}.hero{padding-top:50px}.grid{grid-template-columns:repeat(2,1fr);gap:11px}h1{letter-spacing:-2px}.card{min-height:255px}.cover{height:125px}.catalog-head{align-items:start;flex-direction:column}}
+@media(max-width:420px){.grid{grid-template-columns:1fr}.nav-actions .btn:first-child{display:none}}
+</style>
 </head>
 <body>
-
-    <h1>Catálogo de Juegos PS3 (HEN)</h1>
-
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Buscar juego..." onkeyup="filterGames()">
+<header>
+  <div class="container nav">
+    <a class="brand" href="#"><span class="logo"><img src="imagenes/mi-logo.jpg" alt="Logo" style="width: 100%; height: 100%; border-radius: 11px; object-fit: cover;"></span>BOOTPLAY</a>
+    <div class="nav-actions">
+      <button class="btn" onclick="document.getElementById('catalogo').scrollIntoView()">Catálogo</button>
+      <button class="btn primary" onclick="openCart()">🛒 Pedido <span id="cartCount">0</span></button>
     </div>
+  </div>
+</header>
 
-    <div class="grid-container" id="gameGrid">
-        <!-- Dead Island / Primera tanda -->
-        <div class="card" data-name="dead island">
-            <img src="images/dead_island.webp" alt="Dead Island">
-            <h3>Dead Island</h3>
-            <p>Acción / Survival Horror</p>
-        </div>
-        <div class="card" data-name="dead island riptide">
-            <img src="images/dead_island_riptide.webp" alt="Dead Island Riptide">
-            <h3>Dead Island Riptide</h3>
-            <p>Acción / Survival Horror</p>
-        </div>
-        <div class="card" data-name="dead island riptide complete edition">
-            <img src="images/dead_island_riptide_complete_edition.webp" alt="Dead Island: Riptide Complete Edition">
-            <h3>Dead Island: Riptide Complete Edition</h3>
-            <p>Acción / Survival Horror</p>
-        </div>
-        <div class="card" data-name="dead or alive 5 ultimate">
-            <img src="images/dead_or_alive_5_ultimate.webp" alt="Dead Or Alive 5 Ultimate">
-            <h3>Dead Or Alive 5 Ultimate</h3>
-            <p>Lucha</p>
-        </div>
-        <div class="card" data-name="dead rising 2">
-            <img src="images/dead_rising_2.webp" alt="Dead Rising 2">
-            <h3>Dead Rising 2</h3>
-            <p>Acción / Mundo Abierto</p>
-        </div>
-        <div class="card" data-name="dead space 3">
-            <img src="images/dead_space_3.webp" alt="Dead Space 3">
-            <h3>Dead Space 3</h3>
-            <p>Terror / Acción</p>
-        </div>
-        <div class="card" data-name="dead space ignition">
-            <img src="images/dead_space_ignition.webp" alt="Dead Space: Ignition">
-            <h3>Dead Space: Ignition</h3>
-            <p>Puzzle / Puzle</p>
-        </div>
-        <div class="card" data-name="deadliest warrior legends">
-            <img src="images/deadliest_warrior_legends.webp" alt="Deadliest Warrior: Legends">
-            <h3>Deadliest Warrior: Legends</h3>
-            <p>Lucha</p>
-        </div>
-        <div class="card" data-name="deadliest warrior ancient combats">
-            <img src="images/deadliest_warrior_ancient_combats.webp" alt="Deadliest Warrior: Ancient Combats">
-            <h3>Deadliest Warrior: Ancient Combats</h3>
-            <p>Lucha</p>
-        </div>
-        <div class="card" data-name="deadpool">
-            <img src="images/deadpool.webp" alt="Deadpool">
-            <h3>Deadpool</h3>
-            <p>Acción</p>
-        </div>
-        <div class="card" data-name="deathspank the baconing">
-            <img src="images/deathspank_the_baconing.webp" alt="DeathSpank The Baconing">
-            <h3>DeathSpank The Baconing</h3>
-            <p>RPG / Aventura</p>
-        </div>
-        <div class="card" data-name="deathspank thongs of virtue">
-            <img src="images/deathspank_thongs_of_virtue.webp" alt="DeathSpank: Thongs of Virtue">
-            <h3>DeathSpank: Thongs of Virtue</h3>
-            <p>RPG / Aventura</p>
-        </div>
-        <div class="card" data-name="def jam icon">
-            <img src="images/def_jam_icon.webp" alt="Def Jam: Icon">
-            <h3>Def Jam: Icon</h3>
-            <p>Lucha</p>
-        </div>
-        <div class="card" data-name="defense technica">
-            <img src="images/defense_technica.webp" alt="Defense Technica">
-            <h3>Defense Technica</h3>
-            <p>Estrategia / Tower Defense</p>
-        </div>
-        <div class="card" data-name="destiny">
-            <img src="images/destiny.webp" alt="Destiny">
-            <h3>Destiny</h3>
-            <p>Acción / Shooter</p>
-        </div>
-
-        <!-- Segunda tanda -->
-        <div class="card" data-name="destiny the taken king">
-            <img src="images/destiny_the_taken_king.webp" alt="Destiny: The Taken King">
-            <h3>Destiny: The Taken King</h3>
-            <p>Acción / Shooter</p>
-        </div>
-        <div class="card" data-name="destroy all humans path of the furon">
-            <img src="images/destroy_all_humans_path_of_the_furon.webp" alt="Destroy All Humans! Path of the Furon">
-            <h3>Destroy All Humans! Path of the Furon</h3>
-            <p>Acción / Mundo Abierto</p>
-        </div>
-        <div class="card" data-name="devil may cry 4">
-            <img src="images/devil_may_cry_4.webp" alt="Devil May Cry 4">
-            <h3>Devil May Cry 4</h3>
-            <p>Hack and Slash</p>
-        </div>
-        <div class="card" data-name="diablo iii">
-            <img src="images/diablo_iii.webp" alt="Diablo III">
-            <h3>Diablo III</h3>
-            <p>RPG / Acción</p>
-        </div>
-        <div class="card" data-name="diablo iii reaper of souls ultimate evil edition">
-            <img src="images/diablo_iii_reaper_of_souls_ultimate_evil_edition.webp" alt="Diablo III: Reaper of Souls - Ultimate Evil Edition">
-            <h3>Diablo III: Reaper of Souls - Ultimate Evil Edition</h3>
-            <p>RPG / Acción</p>
-        </div>
-
-        <!-- Tanda final masiva -->
-        <div class="card" data-name="diner dash"><img src="images/diner_dash.webp" alt="Diner Dash"><h3>Diner Dash</h3><p>Gestión / Casual</p></div>
-        <div class="card" data-name="disney infinity"><img src="images/disney_infinity.webp" alt="Disney Infinity"><h3>Disney Infinity</h3><p>Aventura / Sandbox</p></div>
-        <div class="card" data-name="disney infinity 2.0"><img src="images/disney_infinity_2.0.webp" alt="Disney Infinity 2.0"><h3>Disney Infinity 2.0</h3><p>Aventura / Sandbox</p></div>
-        <div class="card" data-name="double dragon neon"><img src="images/double_dragon_neon.webp" alt="Double Dragon Neon"><h3>Double Dragon Neon</h3><p>Beat 'em up</p></div>
-        <div class="card" data-name="dragon age inquisition"><img src="images/dragon_age_inquisition.webp" alt="Dragon Age: Inquisition"><h3>Dragon Age: Inquisition</h3><p>RPG Occidental</p></div>
-        <div class="card" data-name="dragon ball xenoverse"><img src="images/dragon_ball_xenoverse.webp" alt="Dragon Ball Xenoverse"><h3>Dragon Ball Xenoverse</h3><p>Lucha / RPG</p></div>
-        <div class="card" data-name="dragon ball z budokai hd collection"><img src="images/dragon_ball_z_budokai_hd_collection.webp" alt="Dragon Ball Z: Budokai HD Collection"><h3>Dragon Ball Z: Budokai HD Collection</h3><p>Lucha</p></div>
-        <div class="card" data-name="dragon ball z ultimate tenkaichi"><img src="images/dragon_ball_z_ultimate_tenkaichi.webp" alt="Dragon Ball Z: Ultimate Tenkaichi"><h3>Dragon Ball Z: Ultimate Tenkaichi</h3><p>Lucha</p></div>
-        <div class="card" data-name="dragon ball raging blast"><img src="images/dragon_ball_raging_blast.webp" alt="Dragon Ball: Raging Blast"><h3>Dragon Ball: Raging Blast</h3><p>Lucha</p></div>
-        <div class="card" data-name="dragon ball raging blast 2"><img src="images/dragon_ball_raging_blast_2.webp" alt="Dragon Ball: Raging Blast 2"><h3>Dragon Ball: Raging Blast 2</h3><p>Lucha</p></div>
-        <div class="card" data-name="dragon quest heroes yamiryuu to sekaiju no shiro"><img src="images/dragon_quest_heroes_yamiryuu_to_sekaiju_no_shiro.webp" alt="Dragon Quest Heroes"><h3>Dragon Quest Heroes</h3><p>Musou / RPG</p></div>
-        <div class="card" data-name="dream chronicles"><img src="images/dream_chronicles.webp" alt="Dream Chronicles"><h3>Dream Chronicles</h3><p>Objetos Ocultos / Puzzle</p></div>
-        <div class="card" data-name="dreamworks super star kartz"><img src="images/dreamworks_super_star_kartz.webp" alt="DreamWorks Super Star Kartz"><h3>DreamWorks Super Star Kartz</h3><p>Carreras</p></div>
-        <div class="card" data-name="driver san francisco"><img src="images/driver_san_francisco.webp" alt="Driver: San Francisco"><h3>Driver: San Francisco</h3><p>Carreras / Acción</p></div>
-        <div class="card" data-name="dungeon hunter alliance"><img src="images/dungeon_hunter_alliance.webp" alt="Dungeon Hunter: Alliance"><h3>Dungeon Hunter: Alliance</h3><p>RPG / Acción</p></div>
-        <div class="card" data-name="dungeons dragons chronicles of mystara"><img src="images/dungeons_dragons_chronicles_of_mystara.webp" alt="Dungeons & Dragons"><h3>Dungeons & Dragons</h3><p>RPG / Beat 'em up</p></div>
-        <div class="card" data-name="dustforce"><img src="images/dustforce.webp" alt="Dustforce"><h3>Dustforce</h3><p>Plataformas / Indie</p></div>
-        <div class="card" data-name="earthworm jim hd"><img src="images/earthworm_jim_hd.webp" alt="Earthworm Jim HD"><h3>Earthworm Jim HD</h3><p>Plataformas</p></div>
-        <div class="card" data-name="efootball 2025 potato patch v14.4"><img src="images/efootball_2025_potato_patch_v14.4.webp" alt="eFOOTBALL 2025"><h3>eFOOTBALL 2025: Potato Patch</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="efootball 23 vr patch"><img src="images/efootball_23_vr_patch.webp" alt="eFootball 23"><h3>eFootball 23: VR Patch</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="efootball pes 2021 vr patch"><img src="images/efootball_pes_2021_vr_patch.webp" alt="eFootball PES 2021"><h3>eFootball PES 2021: VR Patch</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="efootball pes 2022 vr patch"><img src="images/efootball_pes_2022_vr_patch.webp" alt="eFootball PES 2022"><h3>eFootball PES 2022: VR Patch</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="el chavo kart"><img src="images/el_chavo_kart.webp" alt="El Chavo Kart"><h3>El Chavo Kart</h3><p>Carreras</p></div>
-        <div class="card" data-name="el senor de los anillos la conquista"><img src="images/el_senor_de_los_anillos_la_conquista.webp" alt="El Señor De Los Anillos"><h3>El Señor De Los Anillos: La Conquista</h3><p>Acción</p></div>
-        <div class="card" data-name="el senor de los anillos la guerra del norte"><img src="images/el_senor_de_los_anillos_la_guerra_del_norte.webp" alt="El Señor de Los Anillos"><h3>El Señor de Los Anillos: La Guerra Del Norte</h3><p>RPG / Acción</p></div>
-        <div class="card" data-name="epic mickey el retorno de los dos heroes"><img src="images/epic_mickey_el_retorno_de_los_dos_heroes.webp" alt="Epic Mickey"><h3>Epic Mickey: El Retorno De Los Dos Heroes</h3><p>Plataformas</p></div>
-        <div class="card" data-name="f.e.a.r."><img src="images/fear.webp" alt="F.E.A.R."><h3>F.E.A.R.</h3><p>Shooter / Terror</p></div>
-        <div class="card" data-name="f.e.a.r. 2 project origin"><img src="images/fear_2_project_origin.webp" alt="F.E.A.R. 2"><h3>F.E.A.R. 2: Project Origin</h3><p>Shooter / Terror</p></div>
-        <div class="card" data-name="f.e.a.r. 3"><img src="images/fear_3.webp" alt="F.E.A.R. 3"><h3>F.E.A.R. 3</h3><p>Shooter / Terror</p></div>
-        <div class="card" data-name="f1 2010"><img src="images/f1_2010.webp" alt="F1 2010"><h3>F1 2010</h3><p>Carreras / Simulación</p></div>
-        <div class="card" data-name="faery legends of avalon"><img src="images/faery_legends_of_avalon.webp" alt="Faery: Legends of Avalon"><h3>Faery: Legends of Avalon</h3><p>RPG</p></div>
-        <div class="card" data-name="fallout 3"><img src="images/fallout_3.webp" alt="Fallout 3"><h3>Fallout 3</h3><p>RPG / Mundo Abierto</p></div>
-        <div class="card" data-name="fallout new vegas ultimate edition"><img src="images/fallout_new_vegas_ultimate_edition.webp" alt="Fallout: New Vegas"><h3>Fallout: New Vegas Ultimate Edition</h3><p>RPG / Mundo Abierto</p></div>
-        <div class="card" data-name="family guy back to multiverse"><img src="images/family_guy_back_to_multiverse.webp" alt="Family Guy"><h3>Family Guy: Back To Multiverse</h3><p>Acción / Comedia</p></div>
-        <div class="card" data-name="far cry 4"><img src="images/far_cry_4.webp" alt="Far Cry 4"><h3>Far Cry 4</h3><p>Shooter / Mundo Abierto</p></div>
-        <div class="card" data-name="farming simulator 15"><img src="images/farming_simulator_15.webp" alt="Farming Simulator 15"><h3>Farming Simulator 15</h3><p>Simulación</p></div>
-        <div class="card" data-name="feeding frenzy 2 shipwreck showdown"><img src="images/feeding_frenzy_2_shipwreck_showdown.webp" alt="Feeding Frenzy 2"><h3>Feeding Frenzy 2: Shipwreck Showdown</h3><p>Casual / Arcade</p></div>
-        <div class="card" data-name="fez"><img src="images/fez.webp" alt="Fez"><h3>Fez</h3><p>Plataformas / Puzzle</p></div>
-        <div class="card" data-name="fifa 10"><img src="images/fifa_10.webp" alt="Fifa 10"><h3>Fifa 10</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="fifa 17"><img src="images/fifa_17.webp" alt="Fifa 17"><h3>Fifa 17</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="fifa 18"><img src="images/fifa_18.webp" alt="Fifa 18"><h3>Fifa 18</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="fifa 19"><img src="images/fifa_19.webp" alt="Fifa 19"><h3>Fifa 19</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="fifa 21 next level v1.2"><img src="images/fifa_21_next_level_v1.2.webp" alt="Fifa 21"><h3>Fifa 21 Next Level v1.2</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="fifa 23 cubans gamers patch"><img src="images/fifa_23_cubans_gamers_patch.webp" alt="Fifa 23"><h3>Fifa 23: Cubans Gamers Patch</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="final exam"><img src="images/final_exam.webp" alt="Final Exam"><h3>Final Exam</h3><p>Acción / Beat 'em up</p></div>
-        <div class="card" data-name="final fantasy xiii 2"><img src="images/final_fantasy_xiii_2.webp" alt="Final Fantasy XIII-2"><h3>Final Fantasy XIII-2</h3><p>JRPG</p></div>
-        <div class="card" data-name="final fantasy xiii lightning returns"><img src="images/final_fantasy_xiii_lightning_returns.webp" alt="Final Fantasy XIII: Lightning Returns"><h3>Final Fantasy XIII: Lightning Returns</h3><p>JRPG</p></div>
-        <div class="card" data-name="fist of the north star kens rage"><img src="images/fist_of_the_north_star_kens_rage.webp" alt="Fist Of The North Star"><h3>Fist Of The North: Star Ken's Rage</h3><p>Musou / Acción</p></div>
-        <div class="card" data-name="fist of the north star kens rage 2"><img src="images/fist_of_the_north_star_kens_rage_2.webp" alt="Fist Of The North Star 2"><h3>Fist Of The North: Star Ken's Rage 2</h3><p>Musou / Acción</p></div>
-        <div class="card" data-name="folklore"><img src="images/folklore.webp" alt="Folklore"><h3>Folklore</h3><p>Aventura / RPG</p></div>
-        <div class="card" data-name="foosball 2012"><img src="images/foosball_2012.webp" alt="Foosball 2012"><h3>Foosball 2012</h3><p>Deportes / Casual</p></div>
-        <div class="card" data-name="forest legends the call of love"><img src="images/forest_legends_the_call_of_love.webp" alt="Forest Legends"><h3>Forest Legends: The Call of Love</h3><p>Objetos Ocultos</p></div>
-        <div class="card" data-name="frogger hyper arcade edition"><img src="images/frogger_hyper_arcade_edition.webp" alt="Frogger"><h3>Frogger: Hyper Arcade Edition</h3><p>Arcade</p></div>
-        <div class="card" data-name="fuel"><img src="images/fuel.webp" alt="FUEL"><h3>FUEL</h3><p>Carreras / Mundo Abierto</p></div>
-        <div class="card" data-name="full auto 2 battlelines"><img src="images/full_auto_2_battlelines.webp" alt="Full Auto 2"><h3>Full Auto 2: Battlelines</h3><p>Carreras / Acción</p></div>
-        <div class="card" data-name="funky lab rat"><img src="images/funky_lab_rat.webp" alt="Funky Lab Rat"><h3>Funky Lab Rat</h3><p>Puzzle / Plataformas</p></div>
-        <div class="card" data-name="galaga legions dx"><img src="images/galaga_legions_dx.webp" alt="Galaga Legions DX"><h3>Galaga Legions DX</h3><p>Arcade / Shooter</p></div>
-        <div class="card" data-name="gatling gears"><img src="images/gatling_gears.webp" alt="Gatling Gears"><h3>Gatling Gears</h3><p>Shoot 'em up</p></div>
-        <div class="card" data-name="germinator"><img src="images/germinator.webp" alt="Germinator"><h3>Germinator</h3><p>Puzzle</p></div>
-        <div class="card" data-name="ghostbusters the video game"><img src="images/ghostbusters_the_video_game.webp" alt="Ghostbusters"><h3>Ghostbusters: The Video Game</h3><p>Acción / Aventura</p></div>
-        <div class="card" data-name="giana sisters twisted dreams"><img src="images/giana_sisters_twisted_dreams.webp" alt="Giana Sisters"><h3>Giana Sisters: Twisted Dreams</h3><p>Plataformas</p></div>
-        <div class="card" data-name="god mode"><img src="images/god_mode.webp" alt="God Mode"><h3>God Mode</h3><p>Shooter / Acción</p></div>
-        <div class="card" data-name="god of war 3"><img src="images/god_of_war_3.webp" alt="God Of War 3"><h3>God Of War 3</h3><p>Hack and Slash</p></div>
-        <div class="card" data-name="god of war origins collection"><img src="images/god_of_war_origins_collection.webp" alt="God Of War: Origins Collection"><h3>God Of War: Origins Collection</h3><p>Hack and Slash</p></div>
-        <div class="card" data-name="golden axe beast rider"><img src="images/golden_axe_beast_rider.webp" alt="Golden Axe Beast Rider"><h3>Golden Axe Beast Rider</h3><p>Acción / Aventura</p></div>
-        <div class="card" data-name="goldeneye 007 reloaded"><img src="images/goldeneye_007_reloaded.webp" alt="GoldenEye 007"><h3>GoldenEye 007: Reloaded</h3><p>Shooter en primera persona</p></div>
-        <div class="card" data-name="gran turismo 5 xl edition"><img src="images/gran_turismo_5_xl_edition.webp" alt="Gran Turismo 5 XL Edition"><h3>Gran Turismo 5 XL Edition</h3><p>Simulación / Carreras</p></div>
-        <div class="card" data-name="grand theft auto v"><img src="images/grand_theft_auto_v.webp" alt="Grand Theft Auto V"><h3>Grand Theft Auto V</h3><p>Acción / Mundo Abierto</p></div>
-        <div class="card" data-name="grand theft auto san andreas"><img src="images/grand_theft_auto_san_andreas.webp" alt="Grand Theft Auto: San Andreas"><h3>Grand Theft Auto: San Andreas</h3><p>Acción / Mundo Abierto</p></div>
-        <div class="card" data-name="gravity crash"><img src="images/gravity_crash.webp" alt="Gravity Crash"><h3>Gravity Crash</h3><p>Shooter / Arcade</p></div>
-        <div class="card" data-name="green lantern rise of the manhunters"><img src="images/green_lantern_rise_of_the_manhunters.webp" alt="Green Lantern"><h3>Green Lantern: Rise Of The Manhunters</h3><p>Acción</p></div>
-        <div class="card" data-name="grid 2 reloaded edition"><img src="images/grid_2_reloaded_edition.webp" alt="Grid 2"><h3>Grid 2: Reloaded Edition</h3><p>Carreras</p></div>
-        <div class="card" data-name="guardians of middle-earth"><img src="images/guardians_of_middle-earth.webp" alt="Guardians of Middle-earth"><h3>Guardians of Middle-earth</h3><p>MOBA</p></div>
-        <div class="card" data-name="guitar hero 3 legends of rocks"><img src="images/guitar_hero_3_legends_of_rocks.webp" alt="Guitar Hero 3"><h3>Guitar Hero 3: Legends Of Rocks</h3><p>Musical</p></div>
-        <div class="card" data-name="guitar hero aerosmith"><img src="images/guitar_hero_aerosmith.webp" alt="Guitar Hero: Aerosmith"><h3>Guitar Hero: Aerosmith</h3><p>Musical</p></div>
-        <div class="card" data-name="guitar hero metallica"><img src="images/guitar_hero_metallica.webp" alt="Guitar Hero: Metallica"><h3>Guitar Hero: Metallica</h3><p>Musical</p></div>
-        <div class="card" data-name="guitar hero smash hits"><img src="images/guitar_hero_smash_hits.webp" alt="Guitar Hero: Smash Hits"><h3>Guitar Hero: Smash Hits</h3><p>Musical</p></div>
-        <div class="card" data-name="guitar hero van halen"><img src="images/guitar_hero_van_halen.webp" alt="Guitar Hero: Van Halen</h3><p>Musical</p></div>
-        <div class="card" data-name="guitar hero warriors of rock"><img src="images/guitar_hero_warriors_of_rock.webp" alt="Guitar Hero: Warriors Of Rock"><h3>Guitar Hero: Warriors Of Rock</h3><p>Musical</p></div>
-        <div class="card" data-name="guitar hero world tour"><img src="images/guitar_hero_world_tour.webp" alt="Guitar Hero: World Tour"><h3>Guitar Hero: World Tour</h3><p>Musical</p></div>
-        <div class="card" data-name="hajime no ippo the fighting"><img src="images/hajime_no_ippo_the_fighting.webp" alt="Hajime no Ippo"><h3>Hajime no Ippo: The Fighting</h3><p>Deportes / Boxeo</p></div>
-        <div class="card" data-name="harry potter y el principe mestizo"><img src="images/harry_potter_y_el_principe_mestizo.webp" alt="Harry Potter"><h3>Harry Potter Y El Principe Mestizo</h3><p>Aventura</p></div>
-        <div class="card" data-name="harry potter y las reliquias de la muerte parte 1"><img src="images/harry_potter_y_las_reliquias_de_la_muerte_parte_1.webp" alt="Harry Potter Parte 1"><h3>Harry Potter Reliquias Parte 1</h3><p>Acción / Aventura</p></div>
-        <div class="card" data-name="harry potter y las reliquias de la muerte parte 2"><img src="images/harry_potter_y_las_reliquias_de_la_muerte_parte_2.webp" alt="Harry Potter Parte 2"><h3>Harry Potter Reliquias Parte 2</h3><p>Acción / Aventura</p></div>
-        <div class="card" data-name="hatsune miku project diva f"><img src="images/hatsune_miku_project_diva_f.webp" alt="Hatsune Miku"><h3>Hatsune Miku Project DIVA F</h3><p>Musical / Ritmo</p></div>
-        <div class="card" data-name="heavenly sword"><img src="images/heavenly_sword.webp" alt="Heavenly Sword"><h3>Heavenly Sword</h3><p>Hack and Slash</p></div>
-        <div class="card" data-name="heavy rain"><img src="images/heavy_rain.webp" alt="Heavy Rain"><h3>Heavy Rain</h3><p>Aventura Gráfica / Thriller</p></div>
-        <div class="card" data-name="hokuto no ken"><img src="images/hokuto_no_ken.webp" alt="Hokuto No Ken"><h3>Hokuto No Ken</h3><p>Musou / Acción</p></div>
-        <div class="card" data-name="hunted the demons forge"><img src="images/hunted_the_demons_forge.webp" alt="Hunted: The Demons Forge"><h3>Hunted: The Demons Forge</h3><p>RPG / Acción</p></div>
-        <div class="card" data-name="ice age 3 el origen de los dinosaurios"><img src="images/ice_age_3_el_origen_de_los_dinosaurios.webp" alt="Ice Age 3"><h3>Ice Age 3: El Origen de los Dinosaurios</h3><p>Plataformas / Aventura</p></div>
-        <div class="card" data-name="ice age 4 continental drift arctic games"><img src="images/ice_age_4_continental_drift_arctic_games.webp" alt="Ice Age 4"><h3>Ice Age 4: Continental Drift</h3><p>Deportes / Casual</p></div>
-        <div class="card" data-name="il 2 sturmovik birds of prey"><img src="images/il_2_sturmovik_birds_of_prey.webp" alt="IL-2 Sturmovik"><h3>IL-2 Sturmovik Birds of Prey</h3><p>Simulación de vuelo</p></div>
-        <div class="card" data-name="injustice gods among us ultimate edition"><img src="images/injustice_gods_among_us_ultimate_edition.webp" alt="Injustice"><h3>Injustice Gods Among Us</h3><p>Lucha</p></div>
-        <div class="card" data-name="iron man"><img src="images/iron_man.webp" alt="Iron Man"><h3>Iron Man</h3><p>Acción</p></div>
-        <div class="card" data-name="iron man 2"><img src="images/iron_man_2.webp" alt="Iron Man 2"><h3>Iron Man 2</h3><p>Acción</p></div>
-        <div class="card" data-name="james bond 007 blood stone"><img src="images/james_bond_007_blood_stone.webp" alt="James Bond 007"><h3>James Bond 007: Blood Stone</h3><p>Acción / Shooter</p></div>
-        <div class="card" data-name="jojos bizarre adventure all star battle"><img src="images/jojos_bizarre_adventure_all_star_battle.webp" alt="Jojo's All Star Battle"><h3>Jojo's Bizarre Adventure: All Star</h3><p>Lucha</p></div>
-        <div class="card" data-name="jojos bizarre adventure eyes of heaven"><img src="images/jojos_bizarre_adventure_eyes_of_heaven.webp" alt="Jojo's Eyes Of Heaven"><h3>Jojo's Bizarre Adventure: Eyes Of Heaven</h3><p>Lucha / Acción</p></div>
-        <div class="card" data-name="just dance 2017"><img src="images/just_dance_2017.webp" alt="Just Dance 2017"><h3>Just Dance 2017</h3><p>Musical / Baile</p></div>
-        <div class="card" data-name="just dance 2018"><img src="images/just_dance_2018.webp" alt="Just Dance 2018"><h3>Just Dance 2018</h3><p>Musical / Baile</p></div>
-        <div class="card" data-name="just dance 2019"><img src="images/just_dance_2019.webp" alt="Just Dance 2019"><h3>Just Dance 2019</h3><p>Musical / Baile</p></div>
-        <div class="card" data-name="just dance 4"><img src="images/just_dance_4.webp" alt="Just Dance 4"><h3>Just Dance 4</h3><p>Musical / Baile</p></div>
-        <div class="card" data-name="kill zone 2"><img src="images/kill_zone_2.webp" alt="Kill Zone 2"><h3>Kill Zone 2</h3><p>Shooter en primera persona</p></div>
-        <div class="card" data-name="killzone 3"><img src="images/killzone_3.webp" alt="Killzone 3"><h3>Killzone 3</h3><p>Shooter en primera persona</p></div>
-        <div class="card" data-name="kingdom hearts hd 1.5 remix"><img src="images/kingdom_hearts_hd_1.5_remix.webp" alt="Kingdom Hearts 1.5"><h3>Kingdom Hearts HD 1.5 Remix</h3><p>JRPG / Acción</p></div>
-        <div class="card" data-name="kingdom hearts hd 2.5 remix"><img src="images/kingdom_hearts_hd_2.5_remix.webp" alt="Kingdom Hearts 2.5"><h3>Kingdom Hearts HD 2.5 Remix</h3><p>JRPG / Acción</p></div>
-        <div class="card" data-name="lair"><img src="images/lair.webp" alt="LAIR"><h3>LAIR</h3><p>Acción / Aventura</p></div>
-        <div class="card" data-name="le tour de france 2014"><img src="images/le_tour_de_france_2014.webp" alt="Le Tour De France 2014"><h3>Le Tour De France 2014</h3><p>Deportes</p></div>
-        <div class="card" data-name="lego harry potter years 5 7"><img src="images/lego_harry_potter_years_5_7.webp" alt="LEGO Harry Potter 5-7"><h3>LEGO Harry Potter Years 5-7</h3><p>Aventura / Acción</p></div>
-        <div class="card" data-name="lego harry potter years 1 4"><img src="images/lego_harry_potter_years_1_4.webp" alt="LEGO Harry Potter 1-4"><h3>LEGO Harry Potter: Years 1-4</h3><p>Aventura / Acción</p></div>
-        <div class="card" data-name="lego indiana jones 2 the adventure continues"><img src="images/lego_indiana_jones_2_the_adventure_continues.webp" alt="LEGO Indiana Jones 2"><h3>LEGO Indiana Jones 2</h3><p>Aventura / Acción</p></div>
-        <div class="card" data-name="lego indiana jones the original adventures"><img src="images/lego_indiana_jones_the_original_adventures.webp" alt="LEGO Indiana Jones"><h3>LEGO Indiana Jones: Original</h3><p>Aventura / Acción</p></div>
-        <div class="card" data-name="lego marvel avengers"><img src="images/lego_marvel_avengers.webp" alt="Lego Marvel: Avengers"><h3>Lego Marvel: Avengers</h3><p>Aventura / Acción</p></div>
-        <div class="card" data-name="lego marvel super heroes"><img src="images/lego_marvel_super_heroes.webp" alt="Lego Marvel: Super Heroes"><h3>Lego Marvel: Super Heroes</h3><p>Aventura / Acción</p></div>
-        <div class="card" data-name="lego rock band"><img src="images/lego_rock_band.webp" alt="Lego Rock Band"><h3>Lego Rock Band</h3><p>Musical</p></div>
-        <div class="card" data-name="lego star wars iii the clone wars"><img src="images/lego_star_wars_iii_the_clone_wars.webp" alt="LEGO Star Wars III"><h3>LEGO Star Wars III: Clone Wars</h3><p>Aventura / Acción</p></div>
-        <div class="card" data-name="lego star wars el despertar de la fuerza"><img src="images/lego_star_wars_el_despertar_de_la_fuerza.webp" alt="Lego Star Wars Fuerza"><h3>Lego Star Wars: Despertar</h3><p>Aventura / Acción</p></div>
-        <div class="card" data-name="lego star wars the complete saga"><img src="images/lego_star_wars_the_complete_saga.webp" alt="Lego Star Wars Saga"><h3>Lego Star Wars: Complete Saga</h3><p>Aventura / Acción</p></div>
-        <div class="card" data-name="limbo"><img src="images/limbo.webp" alt="Limbo"><h3>Limbo</h3><p>Plataformas / Puzzle</p></div>
-        <div class="card" data-name="lollipop chainsaw"><img src="images/lollipop_chainsaw.webp" alt="Lollipop ChainSaw"><h3>Lollipop ChainSaw</h3><p>Hack and Slash</p></div>
-        <div class="card" data-name="london 2012 the olympic games"><img src="images/london_2012_the_olympic_games.webp" alt="London 2012"><h3>London 2012: The Olympic Games</h3><p>Deportes</p></div>
-        <div class="card" data-name="lucha libre aaa heroes del ring"><img src="images/lucha_libre_aaa_heroes_del_ring.webp" alt="Lucha Libre AAA"><h3>Lucha Libre AAA: Heroes Del Ring</h3><p>Lucha Libre</p></div>
-        <div class="card" data-name="mafia 2"><img src="images/mafia_2.webp" alt="Mafia 2"><h3>Mafia 2</h3><p>Acción / Mundo Abierto</p></div>
-        <div class="card" data-name="marvel super hero squad comic combat"><img src="images/marvel_super_hero_squad_comic_combat.webp" alt="Marvel Super Hero Squad"><h3>Marvel Super Hero Squad</h3><p>Aventura / Acción</p></div>
-        <div class="card" data-name="marvel ultimate alliance"><img src="images/marvel_ultimate_alliance.webp" alt="Marvel Ultimate Alliance"><h3>Marvel Ultimate Alliance</h3><p>RPG / Acción</p></div>
-        <div class="card" data-name="marvel ultimate alliance 2"><img src="images/marvel_ultimate_alliance_2.webp" alt="Marvel Ultimate Alliance 2"><h3>Marvel Ultimate Alliance 2</h3><p>RPG / Acción</p></div>
-        <div class="card" data-name="mass effect 3"><img src="images/mass_effect_3.webp" alt="Mass Effect 3"><h3>Mass Effect 3</h3><p>RPG / Shooter</p></div>
-        <div class="card" data-name="medal of honor"><img src="images/medal_of_honor.webp" alt="Medal Of Honor"><h3>Medal Of Honor</h3><p>Shooter en primera persona</p></div>
-        <div class="card" data-name="medal of honor airborne"><img src="images/medal_of_honor_airborne.webp" alt="Medal Of Honor: AirBorne"><h3>Medal Of Honor: AirBorne</h3><p>Shooter en primera persona</p></div>
-        <div class="card" data-name="medal of honor warfighter"><img src="images/medal_of_honor_warfighter.webp" alt="Medal Of Honor: Warfighter"><h3>Medal Of Honor: Warfighter</h3><p>Shooter en primera persona</p></div>
-        <div class="card" data-name="megamente comienza la batalla"><img src="images/megamente_comienza_la_batalla.webp" alt="Megamente"><h3>Megamente: Comienza La Batalla</h3><p>Acción / Aventura</p></div>
-        <div class="card" data-name="mercenaries 2 world in flames"><img src="images/mercenaries_2_world_in_flames.webp" alt="Mercenaries 2"><h3>Mercenaries 2: World in Flames</h3><p>Acción / Mundo Abierto</p></div>
-        <div class="card" data-name="metal gear solid 4 guns of the patriot"><img src="images/metal_gear_solid_4_guns_of_the_patriot.webp" alt="Metal Gear Solid 4"><h3>Metal Gear Solid 4: Guns Of The Patriot</h3><p>Sigilo / Acción</p></div>
-        <div class="card" data-name="metal gear solid v ground zeroes"><img src="images/metal_gear_solid_v_ground_zeroes.webp" alt="Metal Gear Solid V Ground Zeroes"><h3>Metal Gear Solid V: Ground Zeroes</h3><p>Sigilo / Acción</p></div>
-        <div class="card" data-name="metal gear solid v the phantom pain"><img src="images/metal_gear_solid_v_the_phantom_pain.webp" alt="Metal Gear Solid V Phantom Pain"><h3>Metal Gear Solid V: Phantom Pain</h3><p>Sigilo / Acción</p></div>
-        <div class="card" data-name="metro last light"><img src="images/metro_last_light.webp" alt="Metro Last Light"><h3>Metro Last Light</h3><p>Shooter / Survival Horror</p></div>
-        <div class="card" data-name="middle earth shadow of mordor"><img src="images/middle_earth_shadow_of_mordor.webp" alt="Middle-Earth: Shadow Of Mordor"><h3>Middle-Earth: Shadow Of Mordor</h3><p>Acción / Aventura</p></div>
-        <div class="card" data-name="midnight club los angeles"><img src="images/midnight_club_los_angeles.webp" alt="Midnight Club: Los Angeles"><h3>Midnight Club: Los Angeles</h3><p>Carreras</p></div>
-        <div class="card" data-name="minecraft playstation 3 edition"><img src="images/minecraft_playstation_3_edition.webp" alt="Minecraft"><h3>Minecraft: PlayStation 3 Edition</h3><p>Sandbox / Construcción</p></div>
-        <div class="card" data-name="minecraft story mode the complete adventure"><img src="images/minecraft_story_mode_the_complete_adventure.webp" alt="Minecraft Story Mode"><h3>Minecraft: Story Mode</h3><p>Aventura Gráfica</p></div>
-        <div class="card" data-name="mlb the show 16"><img src="images/mlb_the_show_16.webp" alt="MLB The Show 16"><h3>MLB The Show 16</h3><p>Deportes / Béisbol</p></div>
-        <div class="card" data-name="modern combat domination"><img src="images/modern_combat_domination.webp" alt="Modern Combat"><h3>Modern Combat: Domination</h3><p>Shooter</p></div>
-        <div class="card" data-name="modnation racers"><img src="images/modnation_racers.webp" alt="Modnation Racers"><h3>Modnation Racers</h3><p>Carreras / Kart</p></div>
-        <div class="card" data-name="mortal kombat vs dc universe"><img src="images/mortal_kombat_vs_dc_universe.webp" alt="Mortal Kombat vs DC"><h3>Mortal Kombat vs DC Universe</h3><p>Lucha</p></div>
-        <div class="card" data-name="mortal kombat komplete edition"><img src="images/mortal_kombat_komplete_edition.webp" alt="Mortal Kombat Komplete"><h3>Mortal Kombat: Komplete Edition</h3><p>Lucha</p></div>
-        <div class="card" data-name="motogp 15"><img src="images/motogp_15.webp" alt="MotoGP 15"><h3>MotoGP 15</h3><p>Carreras / Motos</p></div>
-        <div class="card" data-name="motorstorm apocalypse"><img src="images/motorstorm_apocalypse.webp" alt="MotorStorm Apocalypse"><h3>MotorStorm: Apocalypse</h3><p>Carreras</p></div>
-        <div class="card" data-name="motorstorm complete edition"><img src="images/motorstorm_complete_edition.webp" alt="MotorStorm Complete"><h3>MotorStorm: Complete Edition</h3><p>Carreras</p></div>
-        <div class="card" data-name="motorstorm pacific rift"><img src="images/motorstorm_pacific_rift.webp" alt="MotorStorm Pacific Rift"><h3>MotorStorm: Pacific Rift</h3><p>Carreras</p></div>
-        <div class="card" data-name="murdered soul suspect"><img src="images/murdered_soul_suspect.webp" alt="Murdered Soul Suspect"><h3>Murdered Soul Suspect</h3><p>Aventura / Misterio</p></div>
-        <div class="card" data-name="mx vs atv reflex"><img src="images/mx_vs_atv_reflex.webp" alt="MX Vs ATV Reflex"><h3>MX Vs ATV Reflex</h3><p>Carreras</p></div>
-        <div class="card" data-name="mxgp the official motocross videogame"><img src="images/mxgp_the_official_motocross_videogame.webp" alt="MXGP"><h3>MXGP: Official Motocross</h3><p>Carreras / Motos</p></div>
-        <div class="card" data-name="naruto shippuden ultimate ninja storm"><img src="images/naruto_shippuden_ultimate_ninja_storm.webp" alt="Naruto Storm 1"><h3>Naruto Shippuden Storm 1</h3><p>Lucha</p></div>
-        <div class="card" data-name="naruto shippuden ultimate ninja storm 2"><img src="images/naruto_shippuden_ultimate_ninja_storm_2.webp" alt="Naruto Storm 2"><h3>Naruto Shippuden Storm 2</h3><p>Lucha</p></div>
-        <div class="card" data-name="naruto shippuden ultimate ninja storm 3"><img src="images/naruto_shippuden_ultimate_ninja_storm_3.webp" alt="Naruto Storm 3"><h3>Naruto Shippuden Storm 3</h3><p>Lucha</p></div>
-        <div class="card" data-name="naruto shippuden ultimate ninja storm generations"><img src="images/naruto_shippuden_ultimate_ninja_storm_generations.webp" alt="Naruto Generations"><h3>Naruto Shippuden: Generations</h3><p>Lucha</p></div>
-        <div class="card" data-name="naruto shippuden ultimate ninja storm revolution"><img src="images/naruto_shippuden_ultimate_ninja_storm_revolution.webp" alt="Naruto Revolution"><h3>Naruto Shippuden: Revolution</h3><p>Lucha</p></div>
-        <div class="card" data-name="naruto shippuden ultimate ninja storm revolution 4 roud to boruto"><img src="images/naruto_shippuden_ultimate_ninja_storm_revolution_4_roud_to_boruto.webp" alt="Naruto Boruto Mod"><h3>Naruto Storm 4: Road to Boruto</h3><p>Lucha</p></div>
-        <div class="card" data-name="nacar 15"><img src="images/nascar_15.webp" alt="NASCAR 15"><h3>NASCAR 15</h3><p>Carreras</p></div>
-        <div class="card" data-name="nba 2k16"><img src="images/nba_2k16.webp" alt="NBA 2K16"><h3>NBA 2K16</h3><p>Deportes / Baloncesto</p></div>
-        <div class="card" data-name="nba 2k18"><img src="images/nba_2k18.webp" alt="NBA 2K18"><h3>NBA 2K18</h3><p>Deportes / Baloncesto</p></div>
-        <div class="card" data-name="nba street homecourt"><img src="images/nba_street_homecourt.webp" alt="NBA Street Homecourt"><h3>NBA Street Homecourt</h3><p>Deportes / Arcade</p></div>
-        <div class="card" data-name="ncaa football 14 college football revamped v17"><img src="images/ncaa_football_14_college_football_revamped_v17.webp" alt="NCAA Football 14"><h3>NCAA Football 14 Revamped</h3><p>Deportes / Fútbol Americano</p></div>
-        <div class="card" data-name="need for speed rivals"><img src="images/need_for_speed_rivals.webp" alt="Need For Speed Rivals"><h3>Need For Speed: Rivals</h3><p>Carreras</p></div>
-        <div class="card" data-name="need for speed carbon"><img src="images/need_for_speed_carbon.webp" alt="Need For Speed Carbon"><h3>Need For Speed: Carbon</h3><p>Carreras</p></div>
-        <div class="card" data-name="need for speed hot pursuit"><img src="images/need_for_speed_hot_pursuit.webp" alt="Need For Speed Hot Pursuit"><h3>Need For Speed: Hot Pursuit</h3><p>Carreras</p></div>
-        <div class="card" data-name="need for speed most wanted"><img src="images/need_for_speed_most_wanted.webp" alt="Need For Speed Most Wanted"><h3>Need For Speed: Most Wanted</h3><p>Carreras</p></div>
-        <div class="card" data-name="need for speed prostreet"><img src="images/need_for_speed_prostreet.webp" alt="Need For Speed ProStreet"><h3>Need For Speed: ProStreet</h3><p>Carreras</p></div>
-        <div class="card" data-name="need for speed shift"><img src="images/need_for_speed_shift.webp" alt="Need For Speed Shift"><h3>Need For Speed: Shift</h3><p>Carreras / Simulación</p></div>
-        <div class="card" data-name="need for speed the run"><img src="images/need_for_speed_the_run.webp" alt="Need For Speed The Run"><h3>Need For Speed: The Run</h3><p>Carreras</p></div>
-        <div class="card" data-name="need for speed undercover"><img src="images/need_for_speed_undercover.webp" alt="Need For Speed UnderCover"><h3>Need For Speed: UnderCover</h3><p>Carreras</p></div>
-        <div class="card" data-name="nier"><img src="images/nier.webp" alt="NieR"><h3>NieR</h3><p>Action RPG</p></div>
-        <div class="card" data-name="nier replicant"><img src="images/nier_replicant.webp" alt="Nier Replicant"><h3>Nier Replicant</h3><p>Action RPG</p></div>
-        <div class="card" data-name="ninja gaiden 3 razors edge"><img src="images/ninja_gaiden_3_razors_edge.webp" alt="Ninja Gaiden 3"><h3>Ninja Gaiden 3: Razor´s Edge</h3><p>Hack and Slash</p></div>
-        <div class="card" data-name="ninja gaiden sigma"><img src="images/ninja_gaiden_sigma.webp" alt="Ninja Gaiden Sigma"><h3>Ninja Gaiden Sigma</h3><p>Hack and Slash</p></div>
-        <div class="card" data-name="no more heroes paradise"><img src="images/no_more_heroes_paradise.webp" alt="No More Heroes Paradise"><h3>No More Heroes Paradise</h3><p>Hack and Slash</p></div>
-        <div class="card" data-name="one piece pirate warriors"><img src="images/one_piece_pirate_warriors.webp" alt="One Piece Pirate Warriors"><h3>One Piece: Pirate Warriors</h3><p>Musou</p></div>
-        <div class="card" data-name="one piece pirate warriors 2"><img src="images/one_piece_pirate_warriors_2.webp" alt="One Piece Warriors 2"><h3>One Piece: Pirate Warriors 2</h3><p>Musou</p></div>
-        <div class="card" data-name="one piece pirate warriors 3"><img src="images/one_piece_pirate_warriors_3.webp" alt="One Piece Warriors 3"><h3>One Piece: Pirate Warriors 3</h3><p>Musou</p></div>
-        <div class="card" data-name="operation flashpoint dragon rising"><img src="images/operation_flashpoint_dragon_rising.webp" alt="Operation Flashpoint"><h3>Operation Flashpoint: Dragon</h3><p>Shooter táctico</p></div>
-        <div class="card" data-name="operation flashpoint red river"><img src="images/operation_flashpoint_red_river.webp" alt="Operation Flashpoint Red River"><h3>Operation Flashpoint: Red River</h3><p>Shooter táctico</p></div>
-        <div class="card" data-name="outland"><img src="images/outland.webp" alt="Outland"><h3>Outland</h3><p>Plataformas / Metroidvania</p></div>
-        <div class="card" data-name="pacific rim the video game"><img src="images/pacific_rim_the_video_game.webp" alt="Pacific Rim"><h3>Pacific Rim: The Video Game</h3><p>Lucha</p></div>
-        <div class="card" data-name="persona 5"><img src="images/persona_5.webp" alt="Persona 5"><h3>Persona 5</h3><p>JRPG / Social Sim</p></div>
-        <div class="card" data-name="pes 2008 pro evolution soccer"><img src="images/pes_2008_pro_evolution_soccer.webp" alt="PES 2008"><h3>PES 2008: Pro Evolution Soccer</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="pes 2009 pro evolution soccer"><img src="images/pes_2009_pro_evolution_soccer.webp" alt="PES 2009"><h3>PES 2009: Pro Evolution Soccer</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="pes 2010 pro evolution soccer"><img src="images/pes_2010_pro_evolution_soccer.webp" alt="PES 2010"><h3>PES 2010: Pro Evolution Soccer</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="pes 2011 pro evolution soccer"><img src="images/pes_2011_pro_evolution_soccer.webp" alt="PES 2011"><h3>PES 2011: Pro Evolution Soccer</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="pes 2013 pro evolution soccer"><img src="images/pes_2013_pro_evolution_soccer.webp" alt="PES 2013"><h3>PES 2013: Pro Evolution Soccer</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="pes 2016 pro evolution soccer"><img src="images/pes_2016_pro_evolution_soccer.webp" alt="PES 2016"><h3>PES 2016: Pro Evolution Soccer</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="pes 2018 pro evolution soccer"><img src="images/pes_2018_pro_evolution_soccer.webp" alt="PES 2018"><h3>PES 2018: Pro Evolution Soccer</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="pid"><img src="images/pid.webp" alt="Pid"><h3>Pid</h3><p>Plataformas / Puzzle</p></div>
-        <div class="card" data-name="plants vs zombies"><img src="images/plants_vs_zombies.webp" alt="Plants vs. Zombies"><h3>Plants vs. Zombies</h3><p>Tower Defense</p></div>
-        <div class="card" data-name="plants vs zombies garden warfare"><img src="images/plants_vs_zombies_garden_warfare.webp" alt="PvZ Garden Warfare"><h3>Plants vs. Zombies: Garden Warfare</h3><p>Shooter multijugador</p></div>
-        <div class="card" data-name="playstation all stars battle royale"><img src="images/playstation_all_stars_battle_royale.webp" alt="PlayStation All Stars"><h3>PlayStation All Stars: Battle Royale</h3><p>Lucha / Party</p></div>
-        <div class="card" data-name="portal 2"><img src="images/portal_2.webp" alt="Portal 2"><h3>Portal 2</h3><p>Puzle / Primera persona</p></div>
-        <div class="card" data-name="prototype 2"><img src="images/prototype_2.webp" alt="Prototype 2"><h3>Prototype 2</h3><p>Acción / Mundo Abierto</p></div>
-        <div class="card" data-name="pure futbol"><img src="images/pure_futbol.webp" alt="Pure Futbol"><h3>Pure Futbol</h3><p>Deportes / Fútbol</p></div>
-        <div class="card" data-name="puss in boots"><img src="images/puss_in_boots.webp" alt="Puss In Boots"><h3>Puss In Boots</h3><p>Aventura / Acción</p></div>
-        <div class="card" data-name="racedriver grid"><img src="images/racedriver_grid.webp" alt="RaceDriver : Grid"><h3>RaceDriver : Grid</h3><p>Carreras</p></div>
-        <div class="card" data-name="rage"><img src="images/rage.webp" alt="Rage"><h3>Rage</h3><p>Shooter en primera persona</p></div>
-        <div class="card" data-name="ragnarok odyssey ace"><img src="images/ragnarok_odyssey_ace.webp" alt="Ragnarok Odyssey ACE"><h3>Ragnarok Odyssey ACE</h3><p>Action RPG</p></div>
-        <div class="card" data-name="rambo the video game"><img src="images/rambo_the_video_game.webp" alt="Rambo"><h3>Rambo: The Video Game</h3><p>Acción / Shooter</p></div>
-        <div class="card" data-name="rapala pro bass fishing"><img src="images/rapala_pro_bass_fishing.webp" alt="Rapala Pro Bass Fishing"><h3>Rapala Pro Bass Fishing</h3><p>Deportes / Pesca</p></div>
-        <div class="card" data-name="rapala fishing frenzi"><img src="images/rapala_fishing_frenzy.webp" alt="Rapala Fishing Frenzy"><h3>Rapala: Fishing Frenzy</h3><p>Deportes / Pesca</p></div>
-        <div class="card" data-name="ratatouille"><img src="images/ratatouille.webp" alt="Ratatouille"><h3>Ratatouille</h3><p>Plataformas / Aventura</p></div>
-        <div class="card" data-name="ratchet clank a crack in time"><img src="images/ratchet_clank_a_crack_in_time.webp" alt="Ratchet & Clank A Crack in Time"><h3>Ratchet & Clank: A Crack in Time</h3><p>Plataformas / Acción</p></div>
-        <div class="card" data-name="ratchet and clank all 4 one"><img src="images/ratchet_and_clank_all_4_one.webp" alt="Ratchet and Clank All 4 One"><h3>Ratchet And Clank: All 4 One</h3><p>Plataformas / Cooperativo</p></div>
-        <div class="card" data-name="ratchet and clank full frontal assault"><img src="images/ratchet_and_clank_full_frontal_assault.webp" alt="Ratchet Full Frontal Assault"><h3>Ratchet and Clank: Full Frontal</h3><p>Plataformas / Tower Defense</p></div>
-        <div class="card" data-name="ratchet and clank nexus"><img src="images/ratchet_and_clank_nexus.webp" alt="Ratchet And Clank Nexus"><h3>Ratchet And Clank: Nexus</h3><p>Plataformas / Acción</p></div>
-        <div class="card" data-name="ratchet and clank quest for booty"><img src="images/ratchet_and_clank_quest_for_booty.webp" alt="Ratchet Quest for Booty"><h3>Ratchet And Clank: Quest for Booty</h3><p>Plataformas / Acción</p></div>
-        <div class="card" data-name="ratchet and clank tools of destruction"><img src="images/ratchet_and_clank_tools_of_destruction.webp" alt="Ratchet Tools of Destruction"><h3>Ratchet And Clank: Tools</h3><p>Plataformas / Acción</p></div>
-        <div class="card" data-name="red dead redemption goty"><img src="images/red_dead_redemption_goty.webp" alt="Red Dead Redemption GOTY"><h3>Red Dead Redemption: GOTY</h3><p>Acción / Mundo Abierto</p></div>
-        <div class="card" data-name="resident evil 0 hd remaster"><img src="images/resident_evil_0_hd_remaster.webp" alt="Resident Evil 0 HD"><h3>Resident Evil 0: HD Remaster</h3><p>Survival Horror</p></div>
-        <div class="card" data-name="resident evil 5 definitive edition filtro natural"><img src="images/resident_evil_5_definitive_edition_filtro_natural.webp" alt="Resident Evil 5 Filtro Natural"><h3>Resident Evil 5: Definitive</h3><p>Survival Horror / Acción</p></div>
-        <div class="card" data-name="resident evil 5 gold edition"><img src="images/resident_evil_5_gold_edition.webp" alt="Resident Evil 5 Gold"><h3>Resident Evil 5: Gold Edition</h3><p>Survival Horror / Acción</p></div>
-        <div class="card" data-name="resident evil 6"><img src="images/resident_evil_6.webp" alt="Resident Evil 6"><h3>Resident Evil 6</h3><p>Survival Horror / Acción</p></div>
-        <div class="card" data-name="resident evil operation raccoon city"><img src="images/resident_evil_operation_raccoon_city.webp" alt="Resident Evil Operation Raccoon City"><h3>Resident Evil: Operation Raccoon City</h3><p>Shooter / Acción</p></div>
-        <div class="card" data-name="resident evil revelations"><img src="images/resident_evil_revelations.webp" alt="Resident Evil Revelations"><h3>Resident Evil: Revelations</h3><p>Survival Horror</p></div>
-        <div class="card" data-name="resident evil revelations 2"><img src="images/resident_evil_revelations_2.webp" alt="Resident Evil Revelations 2"><h3>Resident Evil: Revelations 2</h3><p>Survival Horror</p></div>
-        <div class="card" data-name="resistance 3"><img src="images/resistance_3.webp" alt="Resistance 3"><h3>Resistance 3</h3><p>Shooter en primera persona</p></div>
-        <div class="card" data-name="ride"><img src="images/ride.webp" alt="Ride"><h3>Ride</h3><p>Carreras / Motos</p></div>
-        <div class="card" data-name="ridge racer unbounded"><img src="images/ridge_racer_unbounded.webp" alt="Ridge Racer Unbounded"><h3>Ridge Racer: Unbounded</h3><p>Carreras</p></div>
-        <div class="card" data-name="rio the video game"><img src="images/rio_the_video_game.webp" alt="Rio"><h3>Rio: The Video Game</h3><p>Plataformas / Casual</p></div>
-        <div class="card" data-name="rock band 2"><img src="images/rock_band_2.webp" alt="Rock Band 2"><h3>Rock Band 2</h3><p>Musical</p></div>
-        <div class="card" data-name="rock band 3"><img src="images/rock_band_3.webp" alt="Rock Band 3"><h3>Rock Band 3</h3><p>Musical</p></div>
-        <div class="card" data-name="sacred 3"><img src="images/sacred_3.webp" alt="Sacred 3"><h3>Sacred 3</h3><p>Action RPG</p></div>
-        <div class="card" data-name="saint seiya sanctuary battle"><img src="images/saint_seiya_sanctuary_battle.webp" alt="Saint Seiya Sanctuary Battle"><h3>Saint Seiya: Sanctuary Battle</h3><p>Lucha / Musou</p></div>
-        <div class="card" data-name="saint seiya soldiers soul"><img src="images/saint_seiya_soldiers_soul.webp" alt="Saint Seiya Soldier's Soul"><h3>Saint Seiya: Soldier's Soul</h3><p>Lucha</p></div>
-        <div class="card" data-name="saw the video game"><img src="images/saw_the_video_game.webp" alt="SAW The Video Game"><h3>SAW: The Video Game</h3><p>Survival Horror / Puzzle</p></div>
-        <div class="card" data-name="scott pilgrim vs the world the game"><img src="images/scott_pilgrim_vs_the_world_the_game.webp" alt="Scott Pilgrim"><h3>Scott Pilgrim vs The World</h3><p>Beat 'em up</p></div>
-        <div class="card" data-name="shadows of the damned"><img src="images/shadows_of_the_damned.webp" alt="Shadows of the Damned"><h3>Shadows of the Damned</h3><p>Shooter / Acción</p></div>
-        <div class="card" data-name="shaun white skatebording"><img src="images/shaun_white_skatebording.webp" alt="Shaun White Skatebording"><h3>Shaun White: Skatebording</h3><p>Deportes / Skate</p></div>
-        <div class="card" data-name="shellshock 2 blood trails"><img src="images/shellshock_2_blood_trails.webp" alt="ShellShock 2 Blood Trails"><h3>ShellShock 2: Blood Trails</h3><p>Shooter / Terror</p></div>
-        <div class="card" data-name="shingeki no kyojin attack on titan"><img src="images/shingeki_no_kyojin_attack_on_titan.webp" alt="Attack on Titan"><h3>Shingeki no Kyojin: Attack on Titan</h3><p>Acción / Musou</p></div>
-        <div class="card" data-name="shrek forever after the final chapter"><img src="images/shrek_forever_after_the_final_chapter.webp" alt="Shrek Forever After"><h3>Shrek: Forever After</h3><p>Plataformas / Aventura</p></div>
-        <div class="card" data-name="sid meiers civilization revolution"><img src="images/sid_meiers_civilization_revolution.webp" alt="Sid Meier's Civilization"><h3>Sid Meier's Civilization Revolution</h3><p>Estrategia por turnos</p></div>
-        <div class="card" data-name="silent hill downpour"><img src="images/silent_hill_downpour.webp" alt="Silent Hill Downpour"><h3>Silent Hill: Downpour</h3><p>Survival Horror</p></div>
-        <div class="card" data-name="silent hill hd collection"><img src="images/silent_hill_hd_collection.webp" alt="Silent Hill HD Collection"><h3>Silent Hill: HD Collection</h3><p>Survival Horror</p></div>
-        <div class="card" data-name="singularity"><img src="images/singularity.webp" alt="Singularity"><h3>Singularity</h3><p>Shooter en primera persona</p></div>
-        <div class="card" data-name="siren blood curse"><img src="images/siren_blood_curse.webp" alt="Siren Blood Curse"><h3>Siren: Blood Curse</h3><p>Survival Horror</p></div>
-        <div class="card" data-name="skate 2"><img src="images/skate_2.webp" alt="Skate 2"><h3>Skate 2</h3><p>Deportes / Skate</p></div>
-        <div class="card" data-name="skate 3"><img src="images/skate_3.webp" alt="Skate 3"><h3>Skate 3</h3><p>Deportes / Skate</p></div>
-        <div class="card" data-name="slender the arrival"><img src="images/slender_the_arrival.webp" alt="Slender The Arrival"><h3>Slender: The Arrival</h3><p>Survival Horror</p></div>
-        <div class="card" data-name="sniper elite iii"><img src="images/sniper_elite_iii.webp" alt="Sniper Elite III"><h3>Sniper Elite III</h3><p>Shooter táctico</p></div>
-        <div class="card" data-name="sniper elite iii ultimate edition"><img src="images/sniper_elite_iii_ultimate_edition.webp" alt="Sniper Elite III Ultimate"><h3>Sniper Elite III: Ultimate Edition</h3><p>Shooter táctico</p></div>
-        <div class="card" data-name="sniper elite v2"><img src="images/sniper_elite_v2.webp" alt="Sniper Elite v2"><h3>Sniper Elite v2</h3><p>Shooter táctico</p></div>
-        <div class="card" data-name="sniper elite v2 game of the year edition"><img src="images/sniper_elite_v2_game_of_the_year_edition.webp" alt="Sniper Elite v2 GOTY"><h3>Sniper Elite v2: GOTY Edition</h3><p>Shooter táctico</p></div>
-        <div class="card" data-name="sniper elite v2 silver star edition"><img src="images/sniper_elite_v2_silver_star_edition.webp" alt="Sniper Elite V2 Silver Star"><h3>Sniper Elite V2: Silver Star</h3><p>Shooter táctico</p></div>
-        <div class="card" data-name="sniper ghost warrior"><img src="images/sniper_ghost_warrior.webp" alt="Sniper Ghost Warrior"><h3>Sniper: Ghost Warrior</h3><p>Shooter táctico</p></div>
-        <div class="card" data-name="sniper ghost warrior 2"><img src="images/sniper_ghost_warrior_2.webp" alt="Sniper Ghost Warrior 2"><h3>Sniper: Ghost Warrior 2</h3><p>Shooter táctico</p></div>
-        <div class="card" data-name="socom 4 u s navy seals"><img src="images/socom_4_u_s_navy_seals.webp" alt="SOCOM 4"><h3>SOCOM 4: U.S. Navy SEALs</h3><p>Shooter táctico</p></div>
-        <div class="card" data-name="socom confrontation"><img src="images/socom_confrontation.webp" alt="SOCOM Confrontation"><h3>SOCOM: Confrontation</h3><p>Shooter táctico</p></div>
-        <div class="card" data-name="sonic and all stars racing transformed"><img src="images/sonic_and_all_stars_racing_transformed.webp" alt="Sonic Racing Transformed"><h3>Sonic Racing Transformed</h3><p>Carreras / Kart</p></div>
-        <div class="card" data-name="soul calibur iv"><img src="images/soul_calibur_iv.webp" alt="Soul Calibur IV"><h3>Soul Calibur IV</h3><p>Lucha</p></div>
-        <div class="card" data-name="soul calibur v"><img src="images/soul_calibur_v.webp" alt="Soul Calibur V"><h3>Soul Calibur V</h3><p>Lucha</p></div>
-        <div class="card" data-name="spider man 3"><img src="images/spider_man_3.webp" alt="Spider-Man 3"><h3>Spider-Man 3</h3><p>Acción / Mundo Abierto</p></div>
-        <div class="card" data-name="spider man 3 collectors edition"><img src="images/spider_man_3_collectors_edition.webp" alt="Spider-Man 3 Collector's"><h3>Spider-Man 3: Collector's</h3><p>Acción / Mundo Abierto</p></div>
-        <div class="card" data-name="spider man edge of time"><img src="images/spider_man_edge_of_time.webp" alt="Spider-Man Edge Of Time"><h3>Spider-Man: Edge Of Time</h3><p>Acción / Aventura</p></div>
-        <div class="card" data-name="spider man web of shadows"><img src="images/spider_man_web_of_shadows.webp" alt="Spider-Man Web Of Shadows"><h3>Spider-Man: Web Of Shadows</h3><p>Acción / Mundo Abierto</p></div>
-        <div class="card" data-name="splatterhouse"><img src="images/splatterhouse.webp" alt="Splatterhouse"><h3>Splatterhouse</h3><p>Hack and Slash / Terror</p></div>
-        <div class="card" data-name="ssx"><img src="images/ssx.webp" alt="SSX"><h3>SSX</h3><p>Deportes / Snowboard</p></div>
-        <div class="card" data-name="stacking"><img src="images/stacking.webp" alt="Stacking"><h3>Stacking</h3><p>Aventura / Puzzle</p></div>
-        <div class="card" data-name="star wars the clone wars republic heroes"><img src="images/star_wars_the_clone_wars_republic_heroes.webp" alt="Star Wars Clone Wars"><h3>Star Wars: Republic Heroes</h3><p>Acción / Aventura</p></div>
-        <div class="card" data-name="star wars the forced unleashed sith edition"><img src="images/star_wars_the_forced_unleashed_sith_edition.webp" alt="Star Wars The Force Unleashed"><h3>Star Wars: Unleashed Sith</h3><p>Acción</p></div>
-        <div class="card" data-name="start the party"><img src="images/start_the_party.webp" alt="Start the Party!"><h3>Start the Party!</h3><p>Party Game</p></div>
-        <div class="card" data-name="street fighter x tekken"><img src="images/street_fighter_x_tekken.webp" alt="Street Fighter X Tekken"><h3>Street Fighter X Tekken</h3><p>Lucha</p></div>
-        <div class="card" data-name="sword art online lost song"><img src="images/sword_art_online_lost_song.webp" alt="Sword Art Online"><h3>Sword Art Online: Lost Song</h3><p>Action RPG</p></div>
-        <div class="card" data-name="syndicate"><img src="images/syndicate.webp" alt="Syndicate"><h3>Syndicate</h3><p>Shooter en primera persona</p></div>
-        <div class="card" data-name="tales of berseria"><img src="images/tales_of_berseria.webp" alt="Tales Of Berseria"><h3>Tales Of Berseria</h3><p>JRPG</p></div>
-        <div class="card" data-name="tekken 6"><img src="images/tekken_6.webp" alt="Tekken 6"><h3>Tekken 6</h3><p>Lucha</p></div>
-        <div class="card" data-name="terraria"><img src="images/terraria.webp" alt="Terraria"><h3>Terraria</h3><p>Sandbox / Aventura</p></div>
-        <div class="card" data-name="test drive unlimited 2"><img src="images/test_drive_ultimated_2.webp" alt="Test Drive Unlimited 2"><h3>Test Drive: Unlimited 2</h3><p>Carreras / Mundo Abierto</p></div>
-        <div class="card" data-name="the beatles rockband"><img src="images/the_beatles_rockband.webp" alt="The Beatles: RockBand"><h3>The Beatles: RockBand</h3><p>Musical</p></div>
-        <div class="card" data-name="the bourne conspiracy"><img src="images/the_bourne_conspiracy.webp" alt="The Bourne Conspiracy"><h3>The Bourne Conspiracy</h3><p>Acción</p></div>
-        <div class="card" data-name="the chronicles of riddick assault on dark athena"><img src="images/the_chronicles_of_riddick_assault_on_dark_athena.webp" alt="The Chronicles Of Riddick"><h3>The Chronicles Of Riddick</h3><p>Shooter / Sigilo</p></div>
-        <div class="card" data-name="the elder scrolls v skyrim"><img src="images/the_elder_scrolls_v_skyrim.webp" alt="The Elder Scrolls V Skyrim"><h3>The Elder Scrolls V: Skyrim</h3><p>RPG / Mundo Abierto</p></div>
-        <div class="card" data-name="the elder scrolls v skyrim legendary edition"><img src="images/the_elder_scrolls_v_skyrim_legendary_edition.webp" alt="Skyrim Legendary Edition"><h3>Skyrim Legendary Edition</h3><p>RPG / Mundo Abierto</p></div>
-        <div class="card" data-name="the elder scrolls oblivion goty"><img src="images/the_elder_scrolls_oblivion_goty.webp" alt="Oblivion GOTY"><h3>The Elder Scrolls: Oblivion GOTY</h3><p>RPG / Mundo Abierto</p></div>
-        <div class="card" data-name="the godfather ii"><img src="images/the_godfather_ii.webp" alt="The Godfather II"><h3>The Godfather II</h3><p>Acción / Mundo Abierto</p></div>
-        <div class="card" data-name="the godfather the dons edition"><img src="images/the_godfather_the_dons_edition.webp" alt="The Godfather Don's Edition"><h3>The Godfather: Don's Edition</h3><p>Acción / Mundo Abierto</p></div>
-        <div class="card" data-name="the incredible hulk"><img src="images/the_incredible_hulk.webp" alt="The Incredible Hulk"><h3>The Incredible Hulk</h3><p>Acción / Mundo Abierto</p></div>
-        <div class="card" data-name="the king of figthers xii"><img src="images/the_king_of_figthers_xii.webp" alt="The King Of Fighters XII"><h3>The King Of Fighters XII</h3><p>Lucha</p></div>
-        <div class="card" data-name="the king of figthers xiii"><img src="images/the_king_of_figthers_xiii.webp" alt="The King Of Fighters XIII"><h3>The King Of Fighters XIII</h3><p>Lucha</p></div>
-        <div class="card" data-name="the last of us"><img src="images/the_last_of_us.webp" alt="The Last Of Us"><h3>The Last Of Us</h3><p>Acción / Survival Horror</p></div>
-        <div class="card" data-name="the orange box"><img src="images/the_orange_box.webp" alt="The Orange Box"><h3>The Orange Box</h3><p>Puzzle / Shooter</p></div>
-        <div class="card" data-name="the saboteur"><img src="images/the_saboteur.webp" alt="The Saboteur"><h3>The Saboteur</h3><p>Acción / Mundo Abierto</p></div>
-        <div class="card" data-name="the simpsons game"><img src="images/the_simpsons_game.webp" alt="The Simpsons Game"><h3>The Simpsons Game</h3><p>Plataformas / Aventura</p></div>
-        <div class="card" data-name="the sims 3"><img src="images/the_sims_3.webp" alt="The Sims 3"><h3>The Sims 3</h3><p>Simulador de vida</p></div>
-        <div class="card" data-name="the sims 3 pets"><img src="images/the_sims_3_pets.webp" alt="The Sims 3 Pets"><h3>The Sims 3: Pets</h3><p>Simulador de vida</p></div>
-        <div class="card" data-name="the walking dead season two"><img src="images/the_walking_dead_season_two.webp" alt="The Walking Dead Season 2"><h3>The Walking Dead: Season Two</h3><p>Aventura Gráfica</p></div>
-        <div class="card" data-name="thor god of thunder"><img src="images/thor_god_of_thunder.webp" alt="Thor: God Of Thunder"><h3>Thor: God Of Thunder</h3><p>Hack and Slash</p></div>
-        <div class="card" data-name="time crisis 4"><img src="images/time_crisis_4.webp" alt="Time Crisis 4"><h3>Time Crisis 4</h3><p>Disparos / Arcade</p></div>
-        <div class="card" data-name="time crisis razing storm"><img src="images/time_crisis_razing_storm.webp" alt="Time Crisis Razing Storm"><h3>Time Crisis: Razing Storm</h3><p>Disparos / Arcade</p></div>
-        <div class="card" data-name="tom clancys ghost recon future soldier"><img src="images/tom_clancys_ghost_recon_future_soldier.webp" alt="Ghost Recon Future Soldier"><h3>Ghost Recon Future Soldier</h3><p>Shooter táctico</p></div>
-        <div class="card" data-name="tom clancys raibow six vegas"><img src="images/tom_clancys_raibow_six_vegas.webp" alt="Rainbow Six Vegas"><h3>Tom Clancy's: Rainbow Six Vegas</h3><p>Shooter táctico</p></div>
-        <div class="card" data-name="tom clancys splinter cell black list"><img src="images/tom_clancys_splinter_cell_black_list.webp" alt="Splinter Cell Blacklist"><h3>Splinter Cell Black List</h3><p>Sigilo / Acción</p></div>
-        <div class="card" data-name="tony hawks pro skater 5"><img src="images/tony_hawks_pro_skater_5.webp" alt="Tony Hawk's Pro Skater 5"><h3>Tony Hawk's Pro Skater 5</h3><p>Deportes / Skate</p></div>
-        <div class="card" data-name="tony hawks project 8"><img src="images/tony_hawks_project_8.webp" alt="Tony Hawk's Project 8"><h3>Tony Hawk's Project 8</h3><p>Deportes / Skate</p></div>
-        <div class="card" data-name="tony hawks proving ground"><img src="images/tony_hawks_proving_ground.webp" alt="Tony Hawk's Proving Ground"><h3>Tony Hawk's Proving Ground</h3><p>Deportes / Skate</p></div>
-        <div class="card" data-name="transformers dark of the moon"><img src="images/transformers_dark_of_the_moon.webp" alt="Transformers Dark of the Moon"><h3>Transformers: Dark Of The Moon</h3><p>Acción</p></div>
-        <div class="card" data-name="transformers the game"><img src="images/transformers_the_game.webp" alt="Transformers The Game"><h3>Transformers: The Game</h3><p>Acción</p></div>
-        <div class="card" data-name="transformers war for cybertron"><img src="images/transformers_war_for_cybertron.webp" alt="Transformers War for Cybertron"><h3>Transformers: War For Cybertron</h3><p>Acción / Shooter</p></div>
-        <div class="card" data-name="trinity souls of zill oll"><img src="images/trinity_souls_of_zill_oll.webp" alt="Trinity Souls of Zill O'll"><h3>Trinity: Souls of Zill O'll</h3><p>Action RPG</p></div>
-        <div class="card" data-name="turok"><img src="images/turok.webp" alt="Turok"><h3>Turok</h3><p>Shooter en primera persona</p></div>
-        <div class="card" data-name="twisted metal"><img src="images/twisted_metal.webp" alt="Twisted Metal"><h3>Twisted Metal</h3><p>Combate de vehículos</p></div>
-        <div class="card" data-name="two worlds ii"><img src="images/two_worlds_ii.webp" alt="Two Worlds II"><h3>Two Worlds II</h3><p>RPG Occidental</p></div>
-        <div class="card" data-name="ufc undisputed 3"><img src="images/ufc_undisputed_3.webp" alt="UFC Undisputed 3"><h3>UFC Undisputed 3</h3><p>Deportes / Artes Marciales</p></div>
-        <div class="card" data-name="ultimate marvel vs capcom 3"><img src="images/ultimate_marvel_vs_capcom_3.webp" alt="Ultimate Marvel Vs Capcom 3"><h3>Ultimate Marvel Vs Capcom 3</h3><p>Lucha</p></div>
-        <div class="card" data-name="ultra street fighter iv"><img src="images/ultra_street_fighter_iv.webp" alt="Ultra Street Fighter IV"><h3>Ultra Street Fighter IV</h3><p>Lucha</p></div>
-        <div class="card" data-name="uncharted 2 among thieves"><img src="images/uncharted_2_among_thieves.webp" alt="Uncharted 2 Among Thieves"><h3>Uncharted 2 : Among Thieves</h3><p>Acción / Aventura</p></div>
-        <div class="card" data-name="uncharted 3 drakes deception"><img src="images/uncharted_3_drakes_deception.webp" alt="Uncharted 3 Drake's Deception"><h3>Uncharted 3: Drake's Deception</h3><p>Acción / Aventura</p></div>
-        <div class="card" data-name="uncharted drakes fortune"><img src="images/uncharted_drakes_fortune.webp" alt="Uncharted Drake's Fortune"><h3>Uncharted: Drakes Fortune</h3><p>Acción / Aventura</p></div>
-        <div class="card" data-name="under night in birth exe late"><img src="images/under_night_in_birth_exe_late.webp" alt="Under Night In Birth"><h3>Under Night In Birth Exe Late</h3><p>Lucha</p></div>
-        <div class="card" data-name="unreal tournament 3"><img src="images/unreal_tournament_3.webp" alt="Unreal Tournament 3"><h3>Shooter en arena</h3><p>Unreal Tournament 3</p></div>
-        <div class="card" data-name="up the game"><img src="images/up_the_game.webp" alt="Up The Game"><h3>Up: The Game</h3><p>Plataformas / Aventura</p></div>
-        <div class="card" data-name="valkyria chronicles"><img src="images/valkyria_chronicles.webp" alt="Valkyria Chronicles"><h3>Valkyria Chronicles</h3><p>RPG / Estrategia</p></div>
-        <div class="card" data-name="vampire rain altered species"><img src="images/vampire_rain_altered_species.webp" alt="Vampire Rain"><h3>Vampire Rain: Altered Species</h3><p>Acción / Terror</p></div>
-        <div class="card" data-name="vancouver 2010"><img src="images/vancouver_2010.webp" alt="Vancouver 2010"><h3>Vancouver 2010</h3><p>Deportes</p></div>
-        <div class="card" data-name="viking battle for asgard"><img src="images/viking_battle_for_asgard.webp" alt="Viking Battle For Asgard"><h3>Viking: Battle For Asgard</h3><p>Hack and Slash</p></div>
-        <div class="card" data-name="vin diesel wheelman"><img src="images/vin_diesel_wheelman.webp" alt="Vin Diesel Wheelman"><h3>Vin Diesel: Wheelman</h3><p>Acción / Conducción</p></div>
-        <div class="card" data-name="virtua tennis 2009"><img src="images/virtua_tennis_2009.webp" alt="Virtua Tennis 2009"><h3>Virtua Tennis 2009</h3><p>Deportes / Tenis</p></div>
-        <div class="card" data-name="virtua tennis 3"><img src="images/virtua_tennis_3.webp" alt="Virtua Tennis 3"><h3>Virtua Tennis 3</h3><p>Deportes / Tenis</p></div>
-        <div class="card" data-name="virtua tennis 4"><img src="images/virtua_tennis_4.webp" alt="Virtua Tennis 4"><h3>Virtua Tennis 4</h3><p>Deportes / Tenis</p></div>
-        <div class="card" data-name="wall e"><img src="images/wall_e.webp" alt="WALL-E"><h3>Wall-E</h3><p>Plataformas / Acción</p></div>
-        <div class="card" data-name="wanted weapons of fate"><img src="images/wanted_weapons_of_fate.webp" alt="Wanted Weapons Of Fate"><h3>Wanted Weapons Of Fate</h3><p>Shooter en tercera persona</p></div>
-        <div class="card" data-name="warhawk"><img src="images/warhawk.webp" alt="Warhawk"><h3>Warhawk</h3><p>Shooter multijugador / Vehículos</p></div>
-        <div class="card" data-name="warriors legends of troy"><img src="images/warriors_legends_of_troy.webp" alt="Warriors Legends Of Troy"><h3>Warriors Legends Of Troy</h3><p>Hack and Slash / Musou</p></div>
-        <div class="card" data-name="watch dogs"><img src="images/watch_dogs.webp" alt="Watch Dogs"><h3>Watch Dogs</h3><p>Acción / Mundo Abierto</p></div>
-        <div class="card" data-name="way of the samurai 3"><img src="images/way_of_the_samurai_3.webp" alt="Way of the Samurai 3"><h3>Way of the Samurai 3</h3><p>Action RPG</p></div>
-        <div class="card" data-name="wet"><img src="images/wet.webp" alt="WET"><h3>WET</h3><p>Acción / Shooter</p></div>
-        <div class="card" data-name="white knight chronicles"><img src="images/white_knight_chronicles.webp" alt="White Knight Chronicles"><h3>White Knight Chronicles</h3><p>JRPG</p></div>
-        <div class="card" data-name="white knight chronicles ii"><img src="images/white_knight_chronicles_ii.webp" alt="White Knight Chronicles II"><h3>White Knight Chronicles II</h3><p>JRPG</p></div>
-        <div class="card" data-name="wolfenstein"><img src="images/wolfenstein.webp" alt="Wolfenstein"><h3>Wolfenstein</h3><p>Shooter en primera persona</p></div>
-        <div class="card" data-name="wrc 3 fia world rally championship"><img src="images/wrc_3_fia_world_rally_championship.webp" alt="WRC 3"><h3>WRC 3: FIA World Rally</h3><p>Carreras / Rally</p></div>
-        <div class="card" data-name="wrc 5 fia world rally championship"><img src="images/wrc_5_fia_world_rally_championship.webp" alt="WRC 5"><h3>WRC 5: FIA World Rally</h3><p>Carreras / Rally</p></div>
-        <div class="card" data-name="wrc powerslide"><img src="images/wrc_powerslide.webp" alt="WRC Powerslide"><h3>Wrc Powerslide</h3><p>Carreras / Arcade</p></div>
-        <div class="card" data-name="wsc real 2011"><img src="images/wsc_real_2011.webp" alt="WSC Real 2011"><h3>WSC Real 2011</h3><p>Carreras / Motos</p></div>
-        <div class="card" data-name="wwe 12"><img src="images/wwe_12.webp" alt="WWE '12"><h3>WWE '12</h3><p>Deportes / Lucha Libre</p></div>
-        <div class="card" data-name="wwe 2k14"><img src="images/wwe_2k14.webp" alt="WWE 2K14"><h3>WWE 2K14</h3><p>Deportes / Lucha Libre</p></div>
-        <div class="card" data-name="wwe 2k16"><img src="images/wwe_2k16.webp" alt="WWE 2K16"><h3>WWE 2K16</h3><p>Deportes / Lucha Libre</p></div>
-        <div class="card" data-name="wwe all stars"><img src="images/wwe_all_stars.webp" alt="WWE All Stars"><h3>WWE All Stars</h3><p>Deportes / Lucha Libre</p></div>
-        <div class="card" data-name="wwe legends of wrestle mania"><img src="images/wwe_legends_of_wrestle_mania.webp" alt="WWE Legends Of Wrestle Mania"><h3>WWE Legends Of Wrestle Mania</h3><p>Deportes / Lucha Libre</p></div>
-        <div class="card" data-name="wwe smackdown vs raw 2008"><img src="images/wwe_smackdown_vs_raw_2008.webp" alt="WWE SmackDown Vs Raw 2008"><h3>WWE SmackDown Vs Raw 2008</h3><p>Deportes / Lucha Libre</p></div>
-        <div class="card" data-name="wwe smackdown vs raw 2010"><img src="images/wwe_smackdown_vs_raw_2010.webp" alt="WWE SmackDown Vs Raw 2010"><h3>WWE SmackDown Vs Raw 2010</h3><p>Deportes / Lucha Libre</p></div>
-        <div class="card" data-name="wwe smackdown vs raw 2011"><img src="images/wwe_smackdown_vs_raw_2011.webp" alt="WWE SmackDown vs. RAW 2011"><h3>WWE SmackDown vs. RAW 2011</h3><p>Deportes / Lucha Libre</p></div>
-        <div class="card" data-name="x blades"><img src="images/x_blades.webp" alt="X-Blades"><h3>X-Blades</h3><p>Hack and Slash</p></div>
-        <div class="card" data-name="x men origins wolverine uncaged edition"><img src="images/x_men_origins_wolverine_uncaged_edition.webp" alt="X-Men Origins Wolverine"><h3>X-Men Origins: Wolverine</h3><p>Hack and Slash</p></div>
-        <div class="card" data-name="x men destiny"><img src="images/x_men_destiny.webp" alt="X-Men: Destiny"><h3>X-Men: Destiny</h3><p>Acción</p></div>
-        <div class="card" data-name="xblaze code embryo"><img src="images/xblaze_code_embryo.webp" alt="XBLAZE Code: Embryo"><h3>XBLAZE Code: Embryo</h3><p>Novela Visual</p></div>
-        <div class="card" data-name="yaiba ninja gaiden z"><img src="images/yaiba_ninja_gaiden_z.webp" alt="Yaiba Ninja Gaiden Z"><h3>Yaiba Ninja Gaiden Z</h3><p>Hack and Slash</p></div>
-        <div class="card" data-name="yakuza 3"><img src="images/yakuza_3.webp" alt="Yakuza 3"><h3>Yakuza 3</h3><p>Action RPG / Beat 'em up</p></div>
-        <div class="card" data-name="yakuza 4"><img src="images/yakuza_4.webp" alt="Yakuza 4"><h3>Yakuza 4</h3><p>Action RPG / Beat 'em up</p></div>
-        <div class="card" data-name="zombie driver hd"><img src="images/zombie_driver_hd.webp" alt="Zombie Driver HD"><h3>Zombie Driver HD</h3><p>Acción / Conducción</p></div>
+<main>
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="eyebrow">Catálogo PS3 HEN</div>
+      <h1>Elegí tus<br>juegos para HEN</h1>
+      <p>Explorá el catálogo de Bootplay, seleccioná los juegos que querés y prepará tu pedido en unos pocos pasos.</p>
+      <button class="btn primary" onclick="document.getElementById('catalogo').scrollIntoView()">Ver catálogo →</button>
     </div>
+<div class="hero-card hero-card-hen">
+  <div class="big">🕹️</div>
+  <strong><span id="heroCount">0</span> juegos disponibles</strong>
+  <p>Buscá por nombre y agregá tus favoritos al pedido.</p>
+</div>
+  </div>
+</section>
 
-    <script>
-        function filterGames() {
-            let input = document.getElementById('searchInput').value.toLowerCase();
-            let cards = document.getElementsByClassName('card');
+<section class="container" id="catalogo">
+  <!-- Formulario temporal para agregar juegos fácil -->
+<div style="background: var(--panel); border: 1px dashed var(--accent); padding: 20px; border-radius: 16px; margin-bottom: 25px;">
+  <h3 style="margin-top: 0; color: var(--accent2);">⚡ Panel rápido de carga (Temporal)</h3>
+  <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+    <input id="newGameName" class="search" type="text" placeholder="Nombre del juego..." style="flex: 1; min-width: 200px;">
+    <input id="newGameFormat" class="search" type="text" placeholder="Formato (ej: HEN PKG)..." style="flex: 1; min-width: 150px;">
+    <input id="newGameImage" class="search" type="text" placeholder="Ruta imagen (ej: imagenes/juego.webp)..." style="flex: 1; min-width: 200px;">
+    <button class="btn primary" onclick="agregarJuegoRapido()">+ Agregar Juego</button>
+  </div>
+</div>
+  <div class="catalog-head">
+    <div>
+      <h2>Catálogo</h2>
+      <div class="count" id="resultCount"></div>
+    </div>
+  </div>
+  <div class="controls">
+    <input id="search" class="search" type="search" placeholder="🔎 Buscar un juego..." autocomplete="off">
+  </div>
+  <div class="grid" id="grid"></div>
+</section>
+</main>
 
-            for (let i = 0; i < cards.length; i++) {
-                let name = cards[i].getAttribute('data-name');
-                if (name.includes(input)) {
-                    cards[i].style.display = "flex";
-                } else {
-                    cards[i].style.display = "none";
-                }
-            }
-        }
-    </script>
+<footer>
+  <div class="container">© <span id="year"></span> Bootplay · Catálogo PS3</div>
+</footer>
+
+<div id="drawerRoot"></div>
+<div id="modalRoot"></div>
+
+<script>
+const GAMES_FIJOS = [
+  {
+    "name": "007 LEGENDS",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/007-legends.webp"
+  },
+  {
+    "name": "2010 Fifa World Cup South Africa",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/2010-fifa-world-cup-south-africa.webp"
+  },
+  {
+    "name": "2014 FIFA World Cup Brazil",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/2014-fifa-world-cup-brazil.webp"
+  },
+  {
+    "name": "3 on 3 NHL Arcade",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/3-on-3-nhl-arcade.webp"
+  },
+  {
+    "name": "Ace Combat: Assault Horizon",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/ace-combat-assault-horizon.webp"
+  },
+  {
+    "name": "Adventure Time: Finn & Jake Investigations",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/adventure-time-finn-jake-investigations.webp"
+  },
+  {
+    "name": "AFL Live",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/afl-live.webp"
+  },
+  {
+    "name": "Akimi Village",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/akimi-village.webp"
+  },
+  {
+    "name": "Aliens vs. Predator",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/aliens-vs-predator.webp"
+  },
+  {
+    "name": "Alone in the Dark: Inferno",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/alone-in-the-dark-inferno.webp"
+  },
+  {
+    "name": "Angry Birds: Star Wars",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/angry-birds-star-wars.webp"
+  },
+  {
+    "name": "Angry Birds: Trilogy",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/angry-birds-trilogy.webp"
+  },
+  {
+    "name": "Apache: Air Assault",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/apache-air-assault.webp"
+  },
+  {
+    "name": "Armored Core 4",
+    "console": "PS3",
+    "format": "HEN PKG",
+    "image": "imagenes/armored-core-4.webp"
+  },
+  {
+    "name": "Armored Core V",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/armored-core-v.webp"
+  },
+  {
+    "name": "Armored Core: For Answer",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/armored-core-for-answer.webp"
+  },
+  {
+    "name": "Armored Core: Verdict Day",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/armored-core-verdict-day.webp"
+  },
+  {
+    "name": "Army Of Two",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/army-of-two.webp"
+  },
+  {
+    "name": "Army Of TWO: The 40th Day",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/army-of-two-the-40th-day.webp"
+  },
+  {
+    "name": "Army Of Two: The Devil's Cartel",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/army-of-two-the-devils-cartel.webp"
+  },
+  {
+    "name": "Assassin's Creed 4: Freedom Cry",
+    "console": "PS3",
+    "format": "HEN PKG",  
+    "image": "imagenes/assassins-creed-4 Freedom Cry.webp"
+  },
+  {
+    "name": "Assassins Creed: Brotherhood",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/assassins-creed-brotherhood.webp"
+  },
+  {
+    "name": "Asura's Wrath",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/asuras-wrath.webp"
+  },
+  {
+    "name": "Awesomenauts",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/awesomenauts.webp"
+  },
+  {
+    "name": "Back To Bed",
+    "console": "PS3",
+    "format": "HEN PKG",
+    "image": "imagenes/back-to-bed.webp"
+  },
+  {
+    "name": "Backbreaker Vengeance",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/backbreaker-vengeance.webp"
+  },
+  {
+    "name": "Backgammon Blitz",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/backgammon-blitz.webp"
+  },
+  {
+    "name": "Bakugan Battle Brawlers",
+    "console": "PS3",
+    "format": "HEN PKG",
+    "image": "imagenes/bakugan-battle-brawlers.webp"
+  },
+  {
+    "name": "Bakugan Battle Brawlers: Defenders Of The Court",
+    "console": "PS3",
+    "format": "HEN PKG",
+    "image": "imagenes/bakugan-battle-brawlers-defenders-of-the-court.webp"
+  },
+  {
+    "name": "Batman Arkham Origins",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/batman-arkham-origins.webp"
+  },
+  {
+    "name": "Batman Origins Blackgate",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/batman-origins-blackgate.webp"
+  },
+  {
+    "name": "Battlefield 3",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/battlefield-3.webp"
+  },
+  {
+    "name": "Battlefield 4: Premium",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/battlefield-4-premium.webp"
+  },
+  {
+    "name": "Battlefield Hardline",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/battlefield-hardline.webp"
+  },
+  {
+    "name": "Battlefield: Bad Company - Gold Edition",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/battlefield-bad-company-gold-edition.webp"
+  },
+  {
+    "name": "Battlefield: Bad Company 2 - Limited Edition",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/battlefield-bad-company-2-limited-edition.webp"
+  },
+  {
+    "name": "Bejeweled 2",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/bejeweled-2.webp"
+  },
+  {
+    "name": "Ben 10: Omniverse",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/ben-10-omniverse.webp"
+  },
+  {
+    "name": "Ben 10: Ultimate Cosmic Destruction",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/ben-10-ultimate-cosmic-destruction.webp"
+  },
+  {
+    "name": "Beyond Two Souls",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/beyond-two-souls.webp"
+  },
+  {
+    "name": "Big Sky Infinity",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/big-sky-infinity.webp"
+  },
+  {
+    "name": "Bioshock Infinite",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/bioshock-infinite.webp"  
+  },
+  {
+    "name": "Blazblue Central Fiction",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/blazblue-central-fiction.webp"
+  },
+  {
+    "name": "Blazblue: Calamity Trigger",
+    "console": "PS3",
+    "format": "HEN PKG",
+    "image": "imagenes/blazblue-calamity-trigger.webp"
+  },
+  {
+    "name": "Blazing Angels: Squadrons of WWII",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/blazing-angels-squadrons-of-wwii.webp"
+  },
+  {
+    "name": "Bleach Soul Resurreccion",
+    "console": "PS3",
+    "format": "HEN PKG",
+    "image": "imagenes/bleach-soul-resurreccion.webp"
+  },
+  {
+    "name": "Blokus",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/blokus.webp"
+  },
+  {
+    "name": "Blood Drive",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/blood-drive.webp"
+  },
+  {
+    "name": "Blood Of The Werewolf",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/blood-of-the-werewolf.webp"
+  },
+  {
+    "name": "Bloodrayne Betrayal",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/bloodrayne-betrayal.webp"  
+  },
+  {
+    "name": "BLUR",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/blur.webp"
+  },
+  {
+    "name": "Borderlands 2: GOTY Edition",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/borderlands-2-goty-edition.webp"
+  },
+  {
+    "name": "Brink",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/brink.webp"
+  },
+  {
+    "name": "Brutal Legend",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/brutal-legend.webp"
+  },
+  {
+    "name": "Burnout Crash",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/burnout-crash.webp"
+  },
+  {
+    "name": "Burnout Paradise",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/burnout-paradise.webp"
+  },
+  {
+    "name": "Cabela's Big Game: Hunter Pro Hunts",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/cabelas-big-game-hunter-pro-hunts.webp"
+  },
+  {
+    "name": "Cabela's Hunting: Expeditions",
+    "console": "PS3",
+    "format": "HEN PKG",
+    "image": "imagenes/cabelas-hunting-expeditions.webp"
+  },
+  {
+    "name": "Call Of Duty: Advanced Warfare",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/call-of-duty-advanced-warfare.webp"
+  },
+  {
+    "name": "Call Of Duty: Black OPS",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/call-of-duty-black-ops.webp"
+  },
+  {
+    "name": "Call Of Duty: Black OPS 2",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/call-of-duty-black-ops-2.webp"
+  },
+  {
+    "name": "Call Of Duty: Ghosts",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/call-of-duty-ghosts.webp"
+  },
+  {
+    "name": "Call Of Duty: Modern Warfare 2",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/call-of-duty-modern-warfare-2.webp"
+  },
+  {
+    "name": "Call Of Duty: Modern Warfare 3",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/call-of-duty-modern-warfare-3.webp"
+  },
+  {
+    "name": "Call Of Duty: World At War",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/call-of-duty-world-at-war.webp"
+  },
+  {
+    "name": "Call of Juarez: Bound in Blood",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/call-of-juarez-bound-in-blood.webp"
+  },
+  {
+    "name": "Call of Juarez: Gunslinger",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/call-of-juarez-gunslinger.webp"
+  },
+  {
+    "name": "Call of Juarez: The Cartel",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/call-of-juarez-the-cartel.webp"
+  },
+  {
+    "name": "Capitan America: Super Soldier",
+    "console": "PS3",
+    "format": "HEN PKG",
+    "image": "imagenes/capitan-america-super-soldier.webp"
+  },
+  {
+    "name": "Cars 2",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/cars-2.webp"
+  },
+  {
+    "name": "Cars: Race-O-Rama",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/cars-race-o-rama.webp"
+  },
+  {
+    "name": "Castle Crashers",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/castle-crashers.webp"
+  },
+  {
+    "name": "Castle of Illusion Starring Mickey Mouse",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/castle-of-illusion-starring-mickey-mouse.webp"
+  },
+  {
+    "name": "Castlevania Harmony of Despair",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/castlevania-harmony-of-despair.webp"
+  },
+  {
+    "name": "Castlevania: Lord Of Shadows",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/castlevania-lord-of-shadows.webp"
+  },
+  {
+    "name": "Castlevania: Lord Of Shadows 2",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/castlevania-lord-of-shadows-2.webp"
+  },
+  {
+    "name": "Castlevania: Lords of Shadow – Mirror of Fate HD",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/castlevania-lords-of-shadow-mirror-of-fate-hd.webp"
+  },
+  {
+    "name": "Child of Light",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/child-of-light.webp"
+  }
+];
+
+let GAMES = JSON.parse(localStorage.getItem("bootplay_custom_games")) || GAMES_FIJOS;
+const WHATSAPP_NUMBER = "5493434524653"; // Reemplazá esto por tu número, sin + ni espacios.
+let selected = JSON.parse(localStorage.getItem("bootplay_selected") || "[]");
+
+const grid = document.getElementById("grid");
+const search = document.getElementById("search");
+document.getElementById("heroCount").textContent = GAMES.length;
+document.getElementById("year").textContent = new Date().getFullYear();
+
+function save(){ localStorage.setItem("bootplay_selected", JSON.stringify(selected)); updateCount(); }
+function updateCount(){ document.getElementById("cartCount").textContent = selected.length; }
+
+function render(){
+  const q = search.value.trim().toLowerCase();
+  const list = GAMES.filter(g => g.name.toLowerCase().includes(q));
+  document.getElementById("resultCount").textContent = `${list.length} juego${list.length===1?"":"s"}`;
+  grid.innerHTML = "";
+  
+  if(!list.length){ 
+      grid.innerHTML = '<div class="empty">No encontramos ese juego. Probá con otro nombre.</div>'; 
+      return; 
+  }
+  
+  list.forEach((g)=>{
+    const exists = selected.includes(g.name);
+    const card = document.createElement("article");
+    card.className = "card";
+    
+    let portada = '<div class="cover-icon">🎮</div>';
+    if (g.image) {
+        portada = `<img src="${g.image}" alt="${escapeHtml(g.name)}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0;">`;
+    }
+
+    card.innerHTML = `
+      <div class="cover" style="cursor: pointer;">
+        ${portada}
+        <span class="badge" style="z-index:1;">● Disponible</span>
+      </div>
+      <div class="card-body">
+        <div class="game-name" style="cursor: pointer;">${escapeHtml(g.name)}</div>
+        <div class="meta">${escapeHtml(g.console)} · Formato: ${escapeHtml(g.format || 'Consultar')}</div>
+       
+        <button class="btn secondary" style="padding: 5px 10px; font-size: 11px; margin-bottom: 8px;" onclick="editarImagen('${escapeHtml(g.name).replace(/'/g, "\\'")}')">✏️ Arreglar Imagen</button>
+        
+        <button class="btn ${exists?"":"primary"} add">${exists?"✓ Agregado":"＋ Agregar al pedido"}</button>
+      </div>`;
+      
+    // Al hacer clic en la tarjeta (portada o nombre), abre el modal de detalles
+    card.querySelector(".cover").onclick = () => openGameModal(g);
+    card.querySelector(".game-name").onclick = () => openGameModal(g);
+
+    // El botón sigue cumpliendo su función de agregar/quitar directamente
+    card.querySelector("button:last-child").onclick = (e) => {
+      e.stopPropagation();
+      toggle(g.name);
+    };
+
+    grid.appendChild(card);
+  });
+}
+
+// Funciones para abrir y cerrar la ventana emergente de detalles
+function openGameModal(g) {
+  const exists = selected.includes(g.name);
+  let modalPortada = '<div style="font-size: 60px;">🎮</div>';
+  if (g.image) {
+    modalPortada = `<img src="${g.image}" alt="${escapeHtml(g.name)}">`;
+  }
+
+  const descripcion = g.desc || `Juego disponible para PS3 (${g.format || 'HEN / No HEN'}). Seleccionalo para armar tu pedido y coordinar la instalación por WhatsApp.`;
+
+  document.getElementById("modalRoot").innerHTML = `
+    <div class="modal-backdrop active" onclick="closeGameModal(event)">
+      <div class="modal-box" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="closeGameModal()">✕</button>
+        <div class="modal-img-container">
+          ${modalPortada}
+        </div>
+        <div>
+          <h3 class="modal-title">${escapeHtml(g.name)}</h3>
+          <p style="font-size: 13px; color: var(--accent2); margin: 4px 0 10px 0;">Consola: ${escapeHtml(g.console)} | Formato: ${escapeHtml(g.format || 'Consultar')}</p>
+          <p class="modal-desc">${escapeHtml(descripcion)}</p>
+        </div>
+        <button class="btn ${exists?"":"primary"}" style="width: 100%; padding: 12px;" onclick="toggleModalGame('${escapeHtml(g.name).replace(/'/g, "\\'")}')">
+          ${exists?"✓ Quitar del pedido":"＋ Agregar al pedido"}
+        </button>
+      </div>
+    </div>`;
+}
+
+function closeGameModal(e) {
+  if (!e || e.target.classList.contains("modal-backdrop") || e.target.classList.contains("modal-close")) {
+    document.getElementById("modalRoot").innerHTML = "";
+  }
+}
+
+function toggleModalGame(name) {
+  toggle(name);
+  const gameObj = GAMES.find(x => x.name === name);
+  if (gameObj) openGameModal(gameObj);
+}
+
+function toggle(name){
+  if(selected.includes(name)) selected = selected.filter(x=>x!==name);
+  else selected.push(name);
+  save(); render();
+}
+
+function openCart(){
+  document.body.classList.add("open");
+  document.getElementById("drawerRoot").innerHTML = `
+    <div class="drawer-backdrop" onclick="closeCart()"></div>
+    <aside class="drawer">
+      <div class="drawer-head"><h3>Tu pedido</h3><button class="btn" onclick="closeCart()">✕</button></div>
+      <div class="selected">
+        ${selected.length ? selected.map((name,i)=>`
+          <div class="selected-item"><span>${escapeHtml(name)}</span><button class="remove" onclick="removeSelected(${i})">Quitar</button></div>
+        `).join("") : '<div class="empty">Todavía no seleccionaste juegos.</div>'}
+      </div>
+      <div class="drawer-footer">
+        <p>Al enviar, se abrirá WhatsApp con tu selección para que puedas consultar y coordinar el pedido.</p>
+        <button class="btn primary" style="width:100%" onclick="sendWhatsApp()" ${selected.length?"":"disabled"}>📲 Enviar pedido por WhatsApp</button>
+      </div>
+    </aside>`;
+}
+function closeCart(){ document.body.classList.remove("open"); document.getElementById("drawerRoot").innerHTML=""; }
+function removeSelected(i){ selected.splice(i,1); save(); openCart(); render(); }
+function sendWhatsApp(){
+  if(!selected.length) return;
+  if(WHATSAPP_NUMBER.includes("X")){
+    alert("Primero configurá tu número de WhatsApp en el archivo index.html.");
+    return;
+  }
+  const text = "Hola Bootplay! Quiero consultar por estos juegos:%0A%0A" +
+    selected.map((x,i)=>`${i+1}. ${encodeURIComponent(x)}`).join("%0A") +
+    "%0A%0AQuedo atento.";
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, "_blank");
+}
+function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
+
+function agregarJuegoRapido() {
+  const name = document.getElementById("newGameName").value.trim();
+  const format = document.getElementById("newGameFormat").value.trim() || "HEN PKG";
+  const image = document.getElementById("newGameImage").value.trim();
+
+  if (!name || !image) {
+    alert("Por lo menos completa el nombre y la ruta de la imagen.");
+    return;
+  }
+
+  const nuevoJuego = {
+    name: name,
+    console: "PS3",
+    format: format,
+    image: image
+  };
+
+  GAMES.push(nuevoJuego);
+  localStorage.setItem("bootplay_custom_games", JSON.stringify(GAMES));
+
+  document.getElementById("newGameName").value = "";
+  document.getElementById("newGameFormat").value = "";
+  document.getElementById("newGameImage").value = "";
+  
+  document.getElementById("heroCount").textContent = GAMES.length;
+  render();
+  alert("¡Juego agregado con éxito!");
+} /* <--- ¡Aquí estaba faltando esta llave que cerraba la función! */
+
+function editarImagen(nombreJuego) {
+  let juegos = JSON.parse(localStorage.getItem("bootplay_custom_games")) || GAMES_FIJOS;
+  let juego = juegos.find(j => j.name === nombreJuego);
+
+  if (!juego) {
+    alert("No se encontró el juego.");
+    return;
+  }
+
+  let nuevaRuta = prompt(`Escribe la ruta correcta para la imagen de "${nombreJuego}":`, juego.image);
+
+  if (nuevaRuta !== null && nuevaRuta.trim() !== "") {
+    juego.image = nuevaRuta.trim();
+    localStorage.setItem("bootplay_custom_games", JSON.stringify(juegos));
+    GAMES = juegos;
+    render();
+    alert("¡Imagen actualizada con éxito!");
+  }
+}
+
+search.addEventListener("input", render);
+updateCount(); 
+render();
+</script>
 </body>
 </html>
