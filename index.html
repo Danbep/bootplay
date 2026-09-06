@@ -199,16 +199,6 @@ footer{border-top:1px solid var(--border);padding:30px 0;color:var(--muted);font
 </section>
 
 <section class="container" id="catalogo">
-  <!-- Formulario temporal para agregar juegos fácil -->
-<div style="background: var(--panel); border: 1px dashed var(--accent); padding: 20px; border-radius: 16px; margin-bottom: 25px;">
-  <h3 style="margin-top: 0; color: var(--accent2);">⚡ Panel rápido de carga (Temporal)</h3>
-  <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-    <input id="newGameName" class="search" type="text" placeholder="Nombre del juego..." style="flex: 1; min-width: 200px;">
-    <input id="newGameFormat" class="search" type="text" placeholder="Formato (ej: HEN PKG)..." style="flex: 1; min-width: 150px;">
-    <input id="newGameImage" class="search" type="text" placeholder="Ruta imagen (ej: imagenes/juego.webp)..." style="flex: 1; min-width: 200px;">
-    <button class="btn primary" onclick="agregarJuegoRapido()">+ Agregar Juego</button>
-  </div>
-</div>
   <div class="catalog-head">
     <div>
       <h2>Catálogo</h2>
@@ -230,8 +220,8 @@ footer{border-top:1px solid var(--border);padding:30px 0;color:var(--muted);font
 <div id="modalRoot"></div>
 
 <script>
-const GAMES_FIJOS = [
-  /* --- TUS JUEGOS ANTERIORES (DEAD ISLAND Y ANTERIORES) --- */
+const GAMES = [
+  /* --- JUEGOS DESDE DEAD ISLAND HACIA ATRÁS --- */
   {
     "name": "Dead Island",
     "console": "PS3",
@@ -293,7 +283,7 @@ const GAMES_FIJOS = [
     "image": "imagenes/army-of-two.webp"
   },
 
-  /* --- RESTO DEL CATALOGO --- */
+  /* --- RESTO DEL CATÁLOGO --- */
   {
     "name": "007 LEGENDS",
     "console": "PS3",
@@ -746,7 +736,6 @@ const GAMES_FIJOS = [
   }
 ];
 
-let GAMES = JSON.parse(localStorage.getItem("bootplay_custom_games")) || GAMES_FIJOS;
 const WHATSAPP_NUMBER = "5493434524653"; // Reemplazá esto por tu número, sin + ni espacios.
 let selected = JSON.parse(localStorage.getItem("bootplay_selected") || "[]");
 
@@ -787,9 +776,6 @@ function render(){
       <div class="card-body">
         <div class="game-name" style="cursor: pointer;">${escapeHtml(g.name)}</div>
         <div class="meta">${escapeHtml(g.console)} · Formato: ${escapeHtml(g.format || 'Consultar')}</div>
-       
-        <button class="btn secondary" style="padding: 5px 10px; font-size: 11px; margin-bottom: 8px;" onclick="editarImagen('${escapeHtml(g.name).replace(/'/g, "\\'")}')">✏️ Arreglar Imagen</button>
-        
         <button class="btn ${exists?"":"primary"} add">${exists?"✓ Agregado":"＋ Agregar al pedido"}</button>
       </div>`;
       
@@ -797,8 +783,8 @@ function render(){
     card.querySelector(".cover").onclick = () => openGameModal(g);
     card.querySelector(".game-name").onclick = () => openGameModal(g);
 
-    // El botón sigue cumpliendo su función de agregar/quitar directamente
-    card.querySelector("button:last-child").onclick = (e) => {
+    // El botón cumple su función de agregar/quitar directamente
+    card.querySelector("button.add").onclick = (e) => {
       e.stopPropagation();
       toggle(g.name);
     };
@@ -885,55 +871,6 @@ function sendWhatsApp(){
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, "_blank");
 }
 function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
-
-function agregarJuegoRapido() {
-  const name = document.getElementById("newGameName").value.trim();
-  const format = document.getElementById("newGameFormat").value.trim() || "HEN PKG";
-  const image = document.getElementById("newGameImage").value.trim();
-
-  if (!name || !image) {
-    alert("Por lo menos completa el nombre y la ruta de la imagen.");
-    return;
-  }
-
-  const nuevoJuego = {
-    name: name,
-    console: "PS3",
-    format: format,
-    image: image
-  };
-
-  GAMES.push(nuevoJuego);
-  localStorage.setItem("bootplay_custom_games", JSON.stringify(GAMES));
-
-  document.getElementById("newGameName").value = "";
-  document.getElementById("newGameFormat").value = "";
-  document.getElementById("newGameImage").value = "";
-  
-  document.getElementById("heroCount").textContent = GAMES.length;
-  render();
-  alert("¡Juego agregado con éxito!");
-}
-
-function editarImagen(nombreJuego) {
-  let juegos = JSON.parse(localStorage.getItem("bootplay_custom_games")) || GAMES_FIJOS;
-  let juego = juegos.find(j => j.name === nombreJuego);
-
-  if (!juego) {
-    alert("No se encontró el juego.");
-    return;
-  }
-
-  let nuevaRuta = prompt(`Escribe la ruta correcta para la imagen de "${nombreJuego}":`, juego.image);
-
-  if (nuevaRuta !== null && nuevaRuta.trim() !== "") {
-    juego.image = nuevaRuta.trim();
-    localStorage.setItem("bootplay_custom_games", JSON.stringify(juegos));
-    GAMES = juegos;
-    render();
-    alert("¡Imagen actualizada con éxito!");
-  }
-}
 
 search.addEventListener("input", render);
 updateCount(); 
