@@ -8,7 +8,6 @@
 <meta name="description" content="Catálogo de juegos PS3 de Bootplay. Seleccioná tus juegos y enviá tu pedido.">
 <style>
   /* Estilos para la ventana emergente (Modal) */
-/* Estilos corregidos para la ventana emergente (Modal) */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -381,7 +380,6 @@ const GAMES_FIJOS = [
     "console": "PS3",
     "format": "HEN PKG",
     "image": "imagenes/back-to-bed.webp"
-    
   },
   {
     "name": "Backbreaker Vengeance",
@@ -702,6 +700,7 @@ const GAMES_FIJOS = [
     "image": "imagenes/child-of-light.webp"
   }
 ];
+
 let GAMES = JSON.parse(localStorage.getItem("bootplay_custom_games")) || GAMES_FIJOS;
 const WHATSAPP_NUMBER = "5493434524653"; // Reemplazá esto por tu número, sin + ni espacios.
 let selected = JSON.parse(localStorage.getItem("bootplay_selected") || "[]");
@@ -744,7 +743,6 @@ function render(){
         <div class="game-name" style="cursor: pointer;">${escapeHtml(g.name)}</div>
         <div class="meta">${escapeHtml(g.console)} · Formato: ${escapeHtml(g.format || 'Consultar')}</div>
        
-        <!-- 👉 PEGA ESTO AQUÍ ABAJO -->
         <button class="btn secondary" style="padding: 5px 10px; font-size: 11px; margin-bottom: 8px;" onclick="editarImagen('${escapeHtml(g.name).replace(/'/g, "\\'")}')">✏️ Arreglar Imagen</button>
         
         <button class="btn ${exists?"":"primary"} add">${exists?"✓ Agregado":"＋ Agregar al pedido"}</button>
@@ -755,7 +753,7 @@ function render(){
     card.querySelector(".game-name").onclick = () => openGameModal(g);
 
     // El botón sigue cumpliendo su función de agregar/quitar directamente
-    card.querySelector("button").onclick = (e) => {
+    card.querySelector("button:last-child").onclick = (e) => {
       e.stopPropagation();
       toggle(g.name);
     };
@@ -772,7 +770,6 @@ function openGameModal(g) {
     modalPortada = `<img src="${g.image}" alt="${escapeHtml(g.name)}">`;
   }
 
-  // Puedes cambiar el texto de la descripción por defecto o sacarlo de tu lista de juegos si agregas una propiedad "desc"
   const descripcion = g.desc || `Juego disponible para PS3 (${g.format || 'HEN / No HEN'}). Seleccionalo para armar tu pedido y coordinar la instalación por WhatsApp.`;
 
   document.getElementById("modalRoot").innerHTML = `
@@ -802,7 +799,6 @@ function closeGameModal(e) {
 
 function toggleModalGame(name) {
   toggle(name);
-  // Actualiza el botón dentro del modal al instante si está abierto
   const gameObj = GAMES.find(x => x.name === name);
   if (gameObj) openGameModal(gameObj);
 }
@@ -844,6 +840,7 @@ function sendWhatsApp(){
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, "_blank");
 }
 function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
+
 function agregarJuegoRapido() {
   const name = document.getElementById("newGameName").value.trim();
   const format = document.getElementById("newGameFormat").value.trim() || "HEN PKG";
@@ -861,14 +858,9 @@ function agregarJuegoRapido() {
     image: image
   };
 
-  // Lo sumamos a la lista
   GAMES.push(nuevoJuego);
-  
-  // Lo guardamos en la memoria del navegador para que no se borre al actualizar
-  // (Nota: solo se guarda en esta compu, luego cuando armemos bien el CMS se pasa todo de una)
   localStorage.setItem("bootplay_custom_games", JSON.stringify(GAMES));
 
-  // Limpiamos losinputs y refrescamos la grilla
   document.getElementById("newGameName").value = "";
   document.getElementById("newGameFormat").value = "";
   document.getElementById("newGameImage").value = "";
@@ -876,6 +868,8 @@ function agregarJuegoRapido() {
   document.getElementById("heroCount").textContent = GAMES.length;
   render();
   alert("¡Juego agregado con éxito!");
+} /* <--- ¡Aquí estaba faltando esta llave que cerraba la función! */
+
 function editarImagen(nombreJuego) {
   let juegos = JSON.parse(localStorage.getItem("bootplay_custom_games")) || GAMES_FIJOS;
   let juego = juegos.find(j => j.name === nombreJuego);
@@ -895,9 +889,10 @@ function editarImagen(nombreJuego) {
     alert("¡Imagen actualizada con éxito!");
   }
 }
-}
+
 search.addEventListener("input", render);
-updateCount(); render();
+updateCount(); 
+render();
 </script>
 </body>
 </html>
