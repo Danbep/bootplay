@@ -231,6 +231,69 @@ footer{border-top:1px solid var(--border);padding:30px 0;color:var(--muted);font
 
 <script>
 const GAMES_FIJOS = [
+  /* --- TUS JUEGOS ANTERIORES (DEAD ISLAND Y ANTERIORES) --- */
+  {
+    "name": "Dead Island",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/dead-island.webp"
+  },
+  {
+    "name": "Dark Souls",
+    "console": "PS3",
+    "format": "HEN PKG",
+    "image": "imagenes/dark-souls.webp"
+  },
+  {
+    "name": "Dante's Inferno",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/dantes-inferno.webp"
+  },
+  {
+    "name": "Crysis 3",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/crysis-3.webp"
+  },
+  {
+    "name": "Crash Bandicoot: Warped",
+    "console": "PS3",
+    "format": "PSN ISO",
+    "image": "imagenes/crash-bandicoot-warped.webp"
+  },
+  {
+    "name": "Blur",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/blur.webp"
+  },
+  {
+    "name": "Battlefield 3",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/battlefield-3.webp"
+  },
+  {
+    "name": "Batman Arkham City",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/batman-arkham-city.webp"
+  },
+  {
+    "name": "Assassins Creed II",
+    "console": "PS3",
+    "format": "NO HEN PKG",
+    "image": "imagenes/assassins-creed-2.webp"
+  },
+  {
+    "name": "Army Of Two",
+    "console": "PS3",
+    "format": "CARPETA PKG",
+    "image": "imagenes/army-of-two.webp"
+  },
+
+  /* --- RESTO DEL CATALOGO --- */
   {
     "name": "007 LEGENDS",
     "console": "PS3",
@@ -334,12 +397,6 @@ const GAMES_FIJOS = [
     "image": "imagenes/armored-core-verdict-day.webp"
   },
   {
-    "name": "Army Of Two",
-    "console": "PS3",
-    "format": "CARPETA PKG",
-    "image": "imagenes/army-of-two.webp"
-  },
-  {
     "name": "Army Of TWO: The 40th Day",
     "console": "PS3",
     "format": "NO HEN PKG",
@@ -416,12 +473,6 @@ const GAMES_FIJOS = [
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/batman-origins-blackgate.webp"
-  },
-  {
-    "name": "Battlefield 3",
-    "console": "PS3",
-    "format": "CARPETA PKG",
-    "image": "imagenes/battlefield-3.webp"
   },
   {
     "name": "Battlefield 4: Premium",
@@ -530,12 +581,6 @@ const GAMES_FIJOS = [
     "console": "PS3",
     "format": "PSN ISO",
     "image": "imagenes/bloodrayne-betrayal.webp"  
-  },
-  {
-    "name": "BLUR",
-    "console": "PS3",
-    "format": "NO HEN PKG",
-    "image": "imagenes/blur.webp"
   },
   {
     "name": "Borderlands 2: GOTY Edition",
@@ -868,7 +913,7 @@ function agregarJuegoRapido() {
   document.getElementById("heroCount").textContent = GAMES.length;
   render();
   alert("¡Juego agregado con éxito!");
-} /* <--- ¡Aquí estaba faltando esta llave que cerraba la función! */
+}
 
 function editarImagen(nombreJuego) {
   let juegos = JSON.parse(localStorage.getItem("bootplay_custom_games")) || GAMES_FIJOS;
