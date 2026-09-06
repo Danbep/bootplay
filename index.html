@@ -743,6 +743,10 @@ function render(){
       <div class="card-body">
         <div class="game-name" style="cursor: pointer;">${escapeHtml(g.name)}</div>
         <div class="meta">${escapeHtml(g.console)} · Formato: ${escapeHtml(g.format || 'Consultar')}</div>
+       
+        <!-- 👉 PEGA ESTO AQUÍ ABAJO -->
+        <button class="btn secondary" style="padding: 5px 10px; font-size: 11px; margin-bottom: 8px;" onclick="editarImagen('${escapeHtml(g.name).replace(/'/g, "\\'")}')">✏️ Arreglar Imagen</button>
+        
         <button class="btn ${exists?"":"primary"} add">${exists?"✓ Agregado":"＋ Agregar al pedido"}</button>
       </div>`;
       
@@ -872,6 +876,24 @@ function agregarJuegoRapido() {
   document.getElementById("heroCount").textContent = GAMES.length;
   render();
   alert("¡Juego agregado con éxito!");
+function editarImagen(nombreJuego) {
+  let juegos = JSON.parse(localStorage.getItem("bootplay_custom_games")) || GAMES_FIJOS;
+  let juego = juegos.find(j => j.name === nombreJuego);
+
+  if (!juego) {
+    alert("No se encontró el juego.");
+    return;
+  }
+
+  let nuevaRuta = prompt(`Escribe la ruta correcta para la imagen de "${nombreJuego}":`, juego.image);
+
+  if (nuevaRuta !== null && nuevaRuta.trim() !== "") {
+    juego.image = nuevaRuta.trim();
+    localStorage.setItem("bootplay_custom_games", JSON.stringify(juegos));
+    GAMES = juegos;
+    render();
+    alert("¡Imagen actualizada con éxito!");
+  }
 }
 search.addEventListener("input", render);
 updateCount(); render();
