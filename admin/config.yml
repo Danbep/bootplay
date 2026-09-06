@@ -1,0 +1,19 @@
+backend:
+  name: github
+  repo: Danbep/Bootplay
+  branch: main
+
+media_folder: "imagenes"
+public_folder: "imagenes"
+
+collections:
+  - name: "juegos"
+    label: "Juegos"
+    folder: "contenido/juegos"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Título", name: "title", widget: "string"}
+      - {label: "Formato", name: "format", widget: "select", options: ["ISO", "PKG", "Carpeta"]}
+      - {label: "Imagen de Portada", name: "image", widget: "image"}
+      - {label: "Descripción", name: "description", widget: "text"}
